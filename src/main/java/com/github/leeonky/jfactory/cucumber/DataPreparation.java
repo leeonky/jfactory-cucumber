@@ -4,6 +4,10 @@ import com.github.leeonky.jfactory.JFactory;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.zh_cn.假如;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 public class DataPreparation {
     private final JFactory jFactory;
 
@@ -12,8 +16,8 @@ public class DataPreparation {
     }
 
     @假如("存在{string}：")
-    public void prepareList(String spec, DataTable dataTable) {
-        dataTable.asMaps().forEach(list ->
-                jFactory.spec(spec).properties(list).create());
+    public List<Object> prepareList(String spec, DataTable dataTable) {
+        return dataTable.asMaps().stream().map(list ->
+                jFactory.spec(spec).properties(list).create()).collect(toList());
     }
 }

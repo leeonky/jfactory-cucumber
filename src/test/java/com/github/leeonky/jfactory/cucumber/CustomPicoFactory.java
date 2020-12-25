@@ -25,6 +25,8 @@ public class CustomPicoFactory implements ObjectFactory {
     public <T> T getInstance(Class<T> glueClass) {
         if (glueClass.equals(DataPreparation.class))
             return (T) new DataPreparation(new EntityFactory());
+        if (glueClass.equals(DataAssertion.class))
+            return (T) new DataAssertion(new EntityFactory());
         return delegate.getInstance(glueClass);
     }
 }

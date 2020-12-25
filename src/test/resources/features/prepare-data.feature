@@ -5,7 +5,7 @@
     假如存在"订单"：
       | customer |
       | James    |
-    那么数据"订单"应为：
+    那么所有"订单"数据应为：
     """
-      ["** .customer='James'"]
+      .size=1 and [0].customer='James'
     """
