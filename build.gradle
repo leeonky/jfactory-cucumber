@@ -54,7 +54,6 @@ dependencies {
 
     testImplementation("io.cucumber:cucumber-junit:5.1.1")
     testImplementation("io.cucumber:cucumber-picocontainer:5.1.1")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine:5.1.1")
     testImplementation 'org.hibernate:hibernate-core:5.4.0.Final'
     testImplementation 'org.hibernate:hibernate-entitymanager:5.4.0.Final'
     testImplementation 'com.h2database:h2:1.4.200'
@@ -73,6 +72,7 @@ test {
 
 pitest {
     targetClasses = ['com.github.leeonky.jfactory.cucumber*']
+    excludedClasses = ['com.github.leeonky.jfactory.cucumber.entity.*']
     outputFormats = ['HTML2']
     junit5PluginVersion = "0.12"
 }
@@ -148,5 +148,9 @@ task cucumber() {
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = ['--plugin', 'pretty', '--glue', 'com.github.leeonky.jfactory.cucumber', 'src/test/resources/features']
         }
+    }
+
+    build {
+        dependsOn cucumber
     }
 }
