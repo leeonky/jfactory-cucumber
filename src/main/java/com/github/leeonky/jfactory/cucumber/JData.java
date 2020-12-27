@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.leeonky.jfactory.JFactory;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.docstring.DocString;
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.DocStringType;
 import io.cucumber.java.zh_cn.假如;
 
 import java.io.IOException;
@@ -22,6 +24,13 @@ public class JData {
 
     @假如("存在{string}：")
     @SuppressWarnings("unchecked")
+    public <T> List<T> prepare(String spec, Table table) {
+        return prepareList(spec, (List) table);
+    }
+
+    //    @假如("存在{string}：")
+    @SuppressWarnings("unchecked")
+    //TODO replace by @DocStringType
     public <T> List<T> prepare(String spec, Object data) {
         try {
             if (data instanceof DataTable)
@@ -46,5 +55,21 @@ public class JData {
     @SuppressWarnings("unchecked")
     public <T> List<T> prepareList(String spec, List<Map<String, ?>> data) {
         return (List<T>) data.stream().map(map -> jFactory.spec(spec).properties(map).create()).collect(toList());
+    }
+
+    @DataTableType
+    public Row transform(Map<String, String> map) {
+//        return Row.create(map);
+        return null;
+    }
+
+    @DocStringType
+    public List<Row> transform(String content) {
+        return null;
+    }
+
+    @DataTableType
+    public Table transform(DataTable dataTable) {
+        return Table.create(dataTable);
     }
 }
