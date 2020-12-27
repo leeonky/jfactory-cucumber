@@ -7,7 +7,10 @@ import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,10 +42,10 @@ class JDataTest {
             jFactory.register(Orders.订单.class);
 
             List<Object> list = jData.prepare("订单",
-                    Table.create(
+                    Table.create(asList(
                             Row.create().set("customer", "James"),
                             Row.create().set("customer", "Tomas")
-                    ));
+                    )));
 
             assertThat(list).isEqualTo(persisted);
             assertThat(persisted).extracting("customer").containsExactly("James", "Tomas");
@@ -59,33 +62,27 @@ class JDataTest {
                     asList("value1", "value2")
             )));
 
-            assertThat(table).hasSize(2);
+            assertThat(table).hasSize(1);
             assertThat(table).extracting("key1").containsExactly("value1");
             assertThat(table).extracting("key2").containsExactly("value2");
         }
 
         @Test
-        void support_json_array_to_list_row() {
-            Map<String, String> data = new HashMap<>();
-            data.put("customer", "James");
-
-            List<Row> rows = jData.transform("[{" +
+        void support_json_array_to_list_row() throws IOException {
+            Table table = jData.transform("[{" +
                     "\"customer\": \"James\"" +
                     "}]");
 
-            assertThat(rows).extracting(Map.class::cast).containsExactly((Map) data);
+            assertThat(table).extracting("customer").containsExactly("James");
         }
 
         @Test
-        void support_json_object_to_list_row() {
-            Map<String, String> data = new HashMap<>();
-            data.put("customer", "James");
-
-            List<Row> rows = jData.transform("{" +
+        void support_json_object_to_list_row() throws IOException {
+            Table table = jData.transform("{" +
                     "\"customer\": \"James\"" +
                     "}");
 
-            assertThat(rows).extracting(Map.class::cast).containsExactly((Map) data);
+            assertThat(table).extracting("customer").containsExactly("James");
         }
     }
 }
