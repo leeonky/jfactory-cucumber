@@ -69,7 +69,7 @@ class JDataTest {
         }
 
         @Test
-        void support_json_array_to_list_row() throws IOException {
+        void support_json_array_to_table() throws IOException {
             Table table = jData.transform("[{" +
                     "\"customer\": \"James\"" +
                     "}]");
@@ -78,12 +78,29 @@ class JDataTest {
         }
 
         @Test
-        void support_json_object_to_list_row() throws IOException {
+        void support_json_object_to_table() throws IOException {
             Table table = jData.transform("{" +
                     "\"customer\": \"James\"" +
                     "}");
 
             assertThat(table).extracting("customer").containsExactly("James");
+        }
+
+        @Test
+        void support_yaml_array_to_table() throws IOException {
+            Table table = jData.transform("- customer: James\n" +
+                    "- customer: Tomas");
+
+            assertThat(table).extracting("customer").containsExactly("James", "Tomas");
+        }
+
+        @Test
+        void support_yaml_object_to_table() throws IOException {
+            Table table = jData.transform("customer: James\n" +
+                    "merchant: JD");
+
+            assertThat(table).extracting("customer").containsExactly("James");
+            assertThat(table).extracting("merchant").containsExactly("JD");
         }
     }
 

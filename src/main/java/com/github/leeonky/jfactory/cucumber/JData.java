@@ -42,8 +42,9 @@ public class JData {
     }
 
     @DataTableType
+    @SuppressWarnings("unchecked")
     public Table transform(DataTable dataTable) {
-        return create(dataTable);
+        return create((List) dataTable.asMaps());
     }
 
     @那么("所有{string}数据应为：")
@@ -52,4 +53,9 @@ public class JData {
         if (!assertResult.isPassed())
             throw new AssertionError(assertResult.getMessage());
     }
+
+    //TODO support English colon
+    //TODO other prepare method and steps
+    //TODO single data assert step
+    //TODO support XML format
 }

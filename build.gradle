@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.github.leeonky:bean-util:0.2.2'
     implementation 'io.cucumber:cucumber-java:5.1.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.0'
 
     testImplementation("io.cucumber:cucumber-junit:5.1.1")
     testImplementation("io.cucumber:cucumber-picocontainer:5.1.1")
