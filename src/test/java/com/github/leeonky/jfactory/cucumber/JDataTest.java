@@ -14,6 +14,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JDataTest {
     private List<Object> persisted = new ArrayList<>();
@@ -43,8 +44,8 @@ class JDataTest {
 
             List<Object> list = jData.prepare("订单",
                     Table.create(asList(
-                            Row.create().set("customer", "James"),
-                            Row.create().set("customer", "Tomas")
+                            new Row().set("customer", "James"),
+                            new Row().set("customer", "Tomas")
                     )));
 
             assertThat(list).isEqualTo(persisted);
@@ -83,6 +84,20 @@ class JDataTest {
                     "}");
 
             assertThat(table).extracting("customer").containsExactly("James");
+        }
+    }
+
+    @Nested
+    class AssertionShould {
+        private JFactory jFactory = new JFactory();
+        private JData jData = new JData(jFactory);
+
+        @Test
+        void should_fetch_all_data_and_do_data_assert() {
+            jFactory.createAs(Orders.订单.class);
+
+            jData.allShould("订单", ".size=1");
+            assertThrows(AssertionError.class, () -> jData.allShould("订单", ".size=0"));
         }
     }
 }

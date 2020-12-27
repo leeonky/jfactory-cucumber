@@ -1,10 +1,13 @@
 package com.github.leeonky.jfactory.cucumber;
 
+import com.github.leeonky.dal.AssertResult;
+import com.github.leeonky.dal.DataAssert;
 import com.github.leeonky.jfactory.JFactory;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.DocStringType;
 import io.cucumber.java.zh_cn.假如;
+import io.cucumber.java.zh_cn.那么;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 
 public class JData {
     private final JFactory jFactory;
+    private final DataAssert dataAssert = new DataAssert();
 
     public JData(JFactory jFactory) {
         this.jFactory = jFactory;
@@ -40,5 +44,12 @@ public class JData {
     @DataTableType
     public Table transform(DataTable dataTable) {
         return create(dataTable);
+    }
+
+    @那么("所有{string}数据应为：")
+    public void allShould(String spec, String docString) {
+        AssertResult assertResult = dataAssert.assertData(jFactory.spec(spec).queryAll(), docString);
+        if (!assertResult.isPassed())
+            throw new AssertionError(assertResult.getMessage());
     }
 }
