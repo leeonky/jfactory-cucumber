@@ -9,3 +9,19 @@
     """
       .size=1 and [0].customer='James'
     """
+
+  场景: 创建订单-JSON格式
+    假如存在"订单"：
+    """
+      [{
+        "customer": "James"
+      },{
+        "customer": "Tomas"
+      }]
+    """
+    那么所有"订单"数据应为：
+    """
+      .size=2
+      and [0].customer='James'
+      and [1].customer='Tomas'
+    """

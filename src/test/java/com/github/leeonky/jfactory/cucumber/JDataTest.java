@@ -4,6 +4,7 @@ import com.github.leeonky.jfactory.DataRepository;
 import com.github.leeonky.jfactory.JFactory;
 import com.github.leeonky.jfactory.cucumber.spec.Orders;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +15,10 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DataPreparationTest {
+class JDataTest {
 
     @Nested
-    class PrepareListShould {
+    class PrepareShould {
         private List<Object> persisted = new ArrayList<>();
         private JFactory jFactory = new JFactory(new DataRepository() {
             @Override
@@ -34,13 +35,13 @@ class DataPreparationTest {
                 persisted.add(object);
             }
         });
-        private DataPreparation dataPreparation = new DataPreparation(jFactory);
+        private JData JData = new JData(jFactory);
 
         @Test
-        void persist_object_list_with_spec_name_and_data() {
+        void persist_object_list_with_spec_name_and_data_table() {
             jFactory.register(Orders.订单.class);
 
-            List<Object> list = dataPreparation.prepareList("订单", DataTable.create(asList(
+            List<Object> list = JData.prepare("订单", DataTable.create(asList(
                     asList("customer"),
                     asList("James"),
                     asList("Tomas")
@@ -48,6 +49,30 @@ class DataPreparationTest {
 
             assertThat(list).isEqualTo(persisted);
             assertThat(persisted).extracting("customer").containsExactly("James", "Tomas");
+        }
+
+        @Test
+        void persist_object_list_with_spec_name_and_json_array() {
+            jFactory.register(Orders.订单.class);
+
+            List<Object> list = JData.prepare("订单", DocString.create("[{" +
+                    "\"customer\": \"James\"" +
+                    "}]"));
+
+            assertThat(list).isEqualTo(persisted);
+            assertThat(persisted).extracting("customer").containsExactly("James");
+        }
+
+        @Test
+        void persist_object_list_with_spec_name_and_json_object() {
+            jFactory.register(Orders.订单.class);
+
+            List<Object> list = JData.prepare("订单", DocString.create("{" +
+                    "\"customer\": \"James\"" +
+                    "}"));
+
+            assertThat(list).isEqualTo(persisted);
+            assertThat(persisted).extracting("customer").containsExactly("James");
         }
     }
 }
