@@ -2,18 +2,17 @@
 功能: 数据检查
 
   场景: 获取并检查数据
-    假如存在"订单"：
+    假如存在"商品"：
     """
-      customer: James
-      merchant: JD
+      name: book
     """
-    那么所有"订单.customer[James]"数据应为：
+    那么所有"商品.name[book]"数据应为：
     """
       .size=1
-      and [0].customer='James'
+      and [0].name='book'
     """
-    那么"订单.customer[James]"数据应为：
+    那么"商品.name[book]"数据应为：
     """
-      .customer='James'
+      .name='book'
     """
 

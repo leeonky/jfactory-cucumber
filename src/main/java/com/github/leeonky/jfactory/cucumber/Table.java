@@ -34,4 +34,8 @@ public class Table extends ArrayList<Row> {
             return YAML_OBJECT_MAPPER.readValue(content, Object.class);
         }
     }
+
+    public Map[] toMapArray() {
+        return toArray(new Map[0]);
+    }
 }

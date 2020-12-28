@@ -2,10 +2,10 @@
 功能: 用表格准备数据
 
   场景: 用表格准备数据
-    假如存在"订单"：
-      | customer |
-      | James    |
-    那么所有"订单"数据应为：
+    假如存在"商品"：
+      | name |
+      | book |
+    那么所有"商品"数据应为：
     """
-      .size=1 and [0].customer='James'
+      .size=1 and [0].name='book'
     """

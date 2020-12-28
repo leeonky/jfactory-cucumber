@@ -1,31 +1,31 @@
 # language: zh-CN
 功能: 用JSON准备数据
 
-  场景: 准备订单-JSON数组格式
-    假如存在"订单"：
+  场景: 准备商品-JSON数组格式
+    假如存在"商品"：
     """
       [{
-        "customer": "James",
+        "name": "book",
       },{
-        "customer": "Tomas"
+        "name": "bicycle"
       }]
     """
-    那么所有"订单"数据应为：
+    那么所有"商品"数据应为：
     """
       .size=2
-      and [0].customer='James'
-      and [1].customer='Tomas'
+      and [0].name='book'
+      and [1].name='bicycle'
     """
 
-  场景: 准备订单-JSON格式
-    假如存在"订单"：
+  场景: 准备商品-JSON格式
+    假如存在"商品"：
     """
       {
-        "customer": "James"
+        "name": "book"
       }
     """
-    那么所有"订单"数据应为：
+    那么所有"商品"数据应为：
     """
       .size=1
-      and [0].customer='James'
+      and [0].name='book'
     """

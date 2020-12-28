@@ -17,9 +17,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static com.github.leeonky.jfactory.cucumber.Table.create;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 public class JData {
@@ -33,12 +33,17 @@ public class JData {
     @假如("存在{string}：")
     @SuppressWarnings("unchecked")
     public <T> List<T> prepare(String spec, Table table) {
-        return prepare(spec, table.toArray(new Map[0]));
+        return prepare(spec, table.toMapArray());
     }
 
     @SuppressWarnings("unchecked")
     public <T> List<T> prepare(String spec, Map<String, ?>... data) {
-        return (List<T>) Stream.of(data).map(map -> toBuild(spec).properties(map).create()).collect(toList());
+        return prepare(spec, asList(data));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> List<T> prepare(String spec, List<Map<String, ?>> data) {
+        return (List<T>) data.stream().map(map -> toBuild(spec).properties(map).create()).collect(toList());
     }
 
     @DocStringType
@@ -88,9 +93,9 @@ public class JData {
         return jFactory.spec(traitsSpec);
     }
 
+    //TODO flatten json yaml Map
     //TODO prepare many to many
     //TODO support English colon
     //TODO revert Table row col
-    //TODO flatten json yaml Map
     //TODO support traits in spec prepare
 }

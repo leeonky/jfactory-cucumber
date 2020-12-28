@@ -10,13 +10,13 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "t_order")
-public class Order {
+@Table(name = "t_products")
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String customer;
-    private String merchant;
+    private String name;
+    private String color;
 }
 

@@ -2,7 +2,7 @@ package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.jfactory.DataRepository;
 import com.github.leeonky.jfactory.JFactory;
-import com.github.leeonky.jfactory.cucumber.spec.Orders;
+import com.github.leeonky.jfactory.cucumber.spec.Products;
 import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,23 +40,23 @@ class JDataTest {
 
         @Test
         void persist_object_list_with_spec_name_and_row_list() {
-            jFactory.register(Orders.订单.class);
+            jFactory.register(Products.商品.class);
 
-            List<Object> list = jData.prepare("订单",
+            List<Object> list = jData.prepare("商品",
                     Table.create(asList(
-                            new Row().set("customer", "James"),
-                            new Row().set("customer", "Tomas")
+                            new Row().set("name", "book"),
+                            new Row().set("name", "bicycle")
                     )));
 
             assertThat(list).isEqualTo(persisted);
-            assertThat(persisted).extracting("customer").containsExactly("James", "Tomas");
+            assertThat(persisted).extracting("name").containsExactly("book", "bicycle");
         }
 
         @Test
         void persist_object_with_default_properties_and_args() {
-            jFactory.register(Orders.订单.class);
+            jFactory.register(Products.商品.class);
 
-            List<Object> list = jData.prepare(2, "订单");
+            List<Object> list = jData.prepare(2, "商品");
 
             assertThat(list).hasSize(2);
         }
@@ -80,36 +80,36 @@ class JDataTest {
         @Test
         void support_json_array_to_table() throws IOException {
             Table table = jData.transform("[{" +
-                    "\"customer\": \"James\"" +
+                    "\"name\": \"book\"" +
                     "}]");
 
-            assertThat(table).extracting("customer").containsExactly("James");
+            assertThat(table).extracting("name").containsExactly("book");
         }
 
         @Test
         void support_json_object_to_table() throws IOException {
             Table table = jData.transform("{" +
-                    "\"customer\": \"James\"" +
+                    "\"name\": \"book\"" +
                     "}");
 
-            assertThat(table).extracting("customer").containsExactly("James");
+            assertThat(table).extracting("name").containsExactly("book");
         }
 
         @Test
         void support_yaml_array_to_table() throws IOException {
-            Table table = jData.transform("- customer: James\n" +
-                    "- customer: Tomas");
+            Table table = jData.transform("- name: book\n" +
+                    "- name: bicycle");
 
-            assertThat(table).extracting("customer").containsExactly("James", "Tomas");
+            assertThat(table).extracting("name").containsExactly("book", "bicycle");
         }
 
         @Test
         void support_yaml_object_to_table() throws IOException {
-            Table table = jData.transform("customer: James\n" +
-                    "merchant: JD");
+            Table table = jData.transform("name: book\n" +
+                    "color: red");
 
-            assertThat(table).extracting("customer").containsExactly("James");
-            assertThat(table).extracting("merchant").containsExactly("JD");
+            assertThat(table).extracting("name").containsExactly("book");
+            assertThat(table).extracting("color").containsExactly("red");
         }
     }
 
@@ -123,10 +123,10 @@ class JDataTest {
 
             @Test
             void should_fetch_all_data_and_do_data_assert() {
-                jFactory.createAs(Orders.订单.class);
+                jFactory.createAs(Products.商品.class);
 
-                jData.allShould("订单", ".size=1");
-                assertThrows(AssertionError.class, () -> jData.allShould("订单", ".size=0"));
+                jData.allShould("商品", ".size=1");
+                assertThrows(AssertionError.class, () -> jData.allShould("商品", ".size=0"));
             }
         }
 
@@ -135,18 +135,18 @@ class JDataTest {
 
             @Test
             void should_fetch_one_data_and_do_data_assert() {
-                jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
+                jFactory.spec(Products.商品.class).property("name", "book").create();
 
-                jData.should("订单.customer[Tom]", ".customer='Tom'");
-                assertThrows(AssertionError.class, () -> jData.should("订单.customer[Tom]", ".customer='Tomas'"));
+                jData.should("商品.name[book]", ".name='book'");
+                assertThrows(AssertionError.class, () -> jData.should("商品.name[book]", ".name='bicycle'"));
             }
 
             @Test
             void should_raise_error_when_query_more_than_one_object() {
-                jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
-                jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
+                jFactory.spec(Products.商品.class).property("name", "book").create();
+                jFactory.spec(Products.商品.class).property("name", "book").create();
 
-                assertThrows(IllegalStateException.class, () -> jData.should("订单.customer[Tom]", "true"));
+                assertThrows(IllegalStateException.class, () -> jData.should("商品.name[book]", "true"));
             }
         }
     }

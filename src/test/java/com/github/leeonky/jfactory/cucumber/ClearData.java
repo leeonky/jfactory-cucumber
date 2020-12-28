@@ -10,7 +10,7 @@ public class ClearData {
     public void clearDB() {
         EntityTransaction transaction = EntityFactory.entityManager.getTransaction();
         transaction.begin();
-        EntityFactory.entityManager.createQuery("delete from Order").executeUpdate();
+        EntityFactory.entityManager.createQuery("delete from Product").executeUpdate();
         transaction.commit();
     }
 }
