@@ -2,6 +2,7 @@ package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.jfactory.DataRepository;
 import com.github.leeonky.jfactory.JFactory;
+import com.github.leeonky.jfactory.cucumber.entity.Product;
 import com.github.leeonky.jfactory.cucumber.spec.Products;
 import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Nested;
@@ -59,6 +60,7 @@ class JDataTest {
             List<Object> list = jData.prepare(2, "商品");
 
             assertThat(list).hasSize(2);
+            assertThat(list).allMatch(Product.class::isInstance);
         }
     }
 
