@@ -7,6 +7,8 @@ import com.github.leeonky.util.BeanClass;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
@@ -70,7 +72,7 @@ public class Table extends ArrayList<Row> {
     }
 
     private Map<String, Object> flat(List<Object> list) {
-        Iterator<Integer> index = Stream.iterate(0, i -> i++).iterator();
+        Iterator<Integer> index = Stream.iterate(0, i -> i + 1).iterator();
         return list.stream().map(e -> flatSub("[" + index.next() + "]", e))
                 .reduce(new LinkedHashMap<>(), this::merge);
     }
@@ -83,8 +85,15 @@ public class Table extends ArrayList<Row> {
             this.postfix = postfix;
         }
 
+        private String format(String postfix) {
+            Matcher matcher = Pattern.compile("\\(?([^)!]*)\\)?(!?)").matcher(postfix);
+            if (matcher.matches())
+                return "(" + matcher.group(1) + ")" + matcher.group(2);
+            throw new IllegalStateException("Invalid postfix: " + postfix);
+        }
+
         public String apply() {
-            return !applied && postfix != null && (applied = true) ? postfix : "";
+            return !applied && postfix != null && (applied = true) ? format(postfix) : "";
         }
     }
 }
