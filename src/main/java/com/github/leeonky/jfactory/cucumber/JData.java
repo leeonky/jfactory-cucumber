@@ -2,6 +2,7 @@ package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.dal.AssertResult;
 import com.github.leeonky.dal.DataAssert;
+import com.github.leeonky.jfactory.Builder;
 import com.github.leeonky.jfactory.JFactory;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.github.leeonky.jfactory.cucumber.Table.create;
@@ -36,7 +38,7 @@ public class JData {
 
     @SuppressWarnings("unchecked")
     public <T> List<T> prepare(String spec, Map<String, ?>... data) {
-        return (List<T>) Stream.of(data).map(map -> jFactory.spec(spec).properties(map).create()).collect(toList());
+        return (List<T>) Stream.of(data).map(map -> toBuild(spec).properties(map).create()).collect(toList());
     }
 
     @DocStringType
@@ -52,7 +54,7 @@ public class JData {
 
     @那么("所有{string}数据应为：")
     public void allShould(String spec, String docString) {
-        report(dataAssert.assertData(parseSpecToList(spec), docString));
+        report(dataAssert.assertData(queryAll(spec), docString));
     }
 
     private void report(AssertResult assertResult) {
@@ -62,13 +64,13 @@ public class JData {
 
     @那么("{string}数据应为：")
     public void should(String specExpression, String docString) {
-        Collection<Object> collection = parseSpecToList(specExpression);
+        Collection<Object> collection = queryAll(specExpression);
         if (collection.size() > 1)
             throw new IllegalStateException(String.format("Got more than one object of `%s`", specExpression));
         report(dataAssert.assertData(collection.iterator().next(), docString));
     }
 
-    private Collection<Object> parseSpecToList(String specExpression) {
+    public Collection<Object> queryAll(String specExpression) {
         Matcher matcher = Pattern.compile("([^\\.]*)\\.(.*)\\[(.*)\\]").matcher(specExpression);
         if (matcher.find())
             return jFactory.spec(matcher.group(1)).property(matcher.group(2), matcher.group(3)).queryAll();
@@ -76,8 +78,19 @@ public class JData {
             return jFactory.spec(specExpression).queryAll();
     }
 
+    @假如("存在{int}个{string}")
+    @SuppressWarnings("unchecked")
+    public <T> List<T> prepare(int count, String spec) {
+        return IntStream.range(0, count).mapToObj(value -> (T) toBuild(spec).create()).collect(toList());
+    }
+
+    private Builder<Object> toBuild(String traitsSpec) {
+        return jFactory.spec(traitsSpec);
+    }
+
     //TODO support English colon
-    //TODO other prepare method and steps
+    //TODO prepare many to many
     //TODO revert Table row col
     //TODO flatten json yaml Map
+    //TODO support traits in spec prepare
 }

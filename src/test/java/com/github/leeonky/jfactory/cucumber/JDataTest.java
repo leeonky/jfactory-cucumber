@@ -51,6 +51,15 @@ class JDataTest {
             assertThat(list).isEqualTo(persisted);
             assertThat(persisted).extracting("customer").containsExactly("James", "Tomas");
         }
+
+        @Test
+        void persist_object_with_default_properties_and_args() {
+            jFactory.register(Orders.订单.class);
+
+            List<Object> list = jData.prepare(2, "订单");
+
+            assertThat(list).hasSize(2);
+        }
     }
 
     @Nested
