@@ -88,8 +88,8 @@ public class JData {
         return jFactory.spec(traitsSpec);
     }
 
-    //TODO support English colon
     //TODO prepare many to many
+    //TODO support English colon
     //TODO revert Table row col
     //TODO flatten json yaml Map
     //TODO support traits in spec prepare

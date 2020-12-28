@@ -27,12 +27,3 @@
       .size=1
       and [0].customer='James' and [0].merchant='JD'
     """
-    那么所有"订单.customer[James]"数据应为：
-    """
-      .size=1
-      and [0].customer='James'
-    """
-    那么"订单.customer[James]"数据应为：
-    """
-      .customer='James'
-    """
