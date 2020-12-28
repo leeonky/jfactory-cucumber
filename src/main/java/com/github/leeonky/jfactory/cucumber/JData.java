@@ -10,8 +10,11 @@ import io.cucumber.java.zh_cn.假如;
 import io.cucumber.java.zh_cn.那么;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.github.leeonky.jfactory.cucumber.Table.create;
@@ -49,13 +52,32 @@ public class JData {
 
     @那么("所有{string}数据应为：")
     public void allShould(String spec, String docString) {
-        AssertResult assertResult = dataAssert.assertData(jFactory.spec(spec).queryAll(), docString);
+        report(dataAssert.assertData(parseSpecToList(spec), docString));
+    }
+
+    private void report(AssertResult assertResult) {
         if (!assertResult.isPassed())
             throw new AssertionError(assertResult.getMessage());
     }
 
+    @那么("{string}数据应为：")
+    public void should(String specExpression, String docString) {
+        Collection<Object> collection = parseSpecToList(specExpression);
+        if (collection.size() > 1)
+            throw new IllegalStateException(String.format("Got more than one object of `%s`", specExpression));
+        report(dataAssert.assertData(collection.iterator().next(), docString));
+    }
+
+    private Collection<Object> parseSpecToList(String specExpression) {
+        Matcher matcher = Pattern.compile("([^\\.]*)\\.(.*)\\[(.*)\\]").matcher(specExpression);
+        if (matcher.find())
+            return jFactory.spec(matcher.group(1)).property(matcher.group(2), matcher.group(3)).queryAll();
+        else
+            return jFactory.spec(specExpression).queryAll();
+    }
+
     //TODO support English colon
     //TODO other prepare method and steps
-    //TODO single data assert step
-    //TODO support XML format
+    //TODO revert Table row col
+    //TODO flatten json yaml Map
 }

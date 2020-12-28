@@ -109,12 +109,36 @@ class JDataTest {
         private JFactory jFactory = new JFactory();
         private JData jData = new JData(jFactory);
 
-        @Test
-        void should_fetch_all_data_and_do_data_assert() {
-            jFactory.createAs(Orders.订单.class);
+        @Nested
+        class AssertAll {
 
-            jData.allShould("订单", ".size=1");
-            assertThrows(AssertionError.class, () -> jData.allShould("订单", ".size=0"));
+            @Test
+            void should_fetch_all_data_and_do_data_assert() {
+                jFactory.createAs(Orders.订单.class);
+
+                jData.allShould("订单", ".size=1");
+                assertThrows(AssertionError.class, () -> jData.allShould("订单", ".size=0"));
+            }
+        }
+
+        @Nested
+        class AssertOne {
+
+            @Test
+            void should_fetch_one_data_and_do_data_assert() {
+                jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
+
+                jData.should("订单.customer[Tom]", ".customer='Tom'");
+                assertThrows(AssertionError.class, () -> jData.should("订单.customer[Tom]", ".customer='Tomas'"));
+            }
+
+            @Test
+            void should_raise_error_when_query_more_than_one_object() {
+                jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
+                jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
+
+                assertThrows(IllegalStateException.class, () -> jData.should("订单.customer[Tom]", "true"));
+            }
         }
     }
 }
