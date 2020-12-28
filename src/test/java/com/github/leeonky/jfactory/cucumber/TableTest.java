@@ -62,4 +62,18 @@ class TableTest {
                 entry("stores[0].customers[0].name", "Tom"),
                 entry("stores[0].customers[0].age", 18));
     }
+
+    @Test
+    void should_fatten_sub_property_with_spec_postfix() throws IOException {
+        Table table = Table.create("" +
+                "customer:\n" +
+                "  _: (Customer)!\n" +
+                "  name: Tom\n" +
+                "  age: 18\n" +
+                "");
+
+        assertThat(table.flatSub()[0]).containsExactly(
+                entry("customer(Customer)!.name", "Tom"),
+                entry("customer.age", 18));
+    }
 }

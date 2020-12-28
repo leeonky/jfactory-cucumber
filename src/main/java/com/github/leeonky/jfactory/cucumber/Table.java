@@ -7,7 +7,6 @@ import com.github.leeonky.util.BeanClass;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
@@ -47,20 +46,22 @@ public class Table extends ArrayList<Row> {
         }};
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> flatSub(String key, Object value) {
         if (value instanceof Map)
-            return combineKey(flat((Map<String, Object>) value), subKey -> key + "." + subKey);
+            return combineKey(flat((Map<String, Object>) value), key, ".");
         else if (value instanceof List)
-            return combineKey(flat((List<Object>) value), subKey -> key + subKey);
+            return combineKey(flat((List<Object>) value), key, "");
         else
             return new HashMap<String, Object>() {{
                 put(key, value);
             }};
     }
 
-    private Map<String, Object> combineKey(Map<String, Object> sub, Function<String, String> rule) {
-        return sub.entrySet().stream()
-                .collect(toMap(e -> rule.apply(e.getKey()), Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
+    private Map<String, Object> combineKey(Map<String, Object> sub, String key, String dot) {
+        Postfix postfix = new Postfix((String) sub.remove("_"));
+        return sub.entrySet().stream().collect(toMap(e -> key + postfix.apply() + dot + e.getKey(),
+                Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
     }
 
     private Map<String, Object> flat(Map<String, Object> value) {
@@ -72,5 +73,18 @@ public class Table extends ArrayList<Row> {
         Iterator<Integer> index = Stream.iterate(0, i -> i++).iterator();
         return list.stream().map(e -> flatSub("[" + index.next() + "]", e))
                 .reduce(new LinkedHashMap<>(), this::merge);
+    }
+
+    private static class Postfix {
+        private final String postfix;
+        private boolean applied = false;
+
+        public Postfix(String postfix) {
+            this.postfix = postfix;
+        }
+
+        public String apply() {
+            return !applied && postfix != null && (applied = true) ? postfix : "";
+        }
     }
 }

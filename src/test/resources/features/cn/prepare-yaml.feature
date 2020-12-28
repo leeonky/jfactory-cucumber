@@ -38,9 +38,8 @@
       stocks:
       - _: (库存)
         size: A4
-        count: 100
+        count: '100'
     """
-#    TODO support spec in map
 #    same with:
 #    | customer | products[0](商品).name | products[0].stocks[0](库存).size | products[0].stocks[0].count |
 #    | Tom      | book                 | A4                             | 100                         |
