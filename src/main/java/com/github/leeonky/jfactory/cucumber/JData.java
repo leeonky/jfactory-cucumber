@@ -33,7 +33,7 @@ public class JData {
     @假如("存在{string}：")
     @SuppressWarnings("unchecked")
     public <T> List<T> prepare(String spec, Table table) {
-        return prepare(spec, table.toMapArray());
+        return prepare(spec, table.flatSub());
     }
 
     @SuppressWarnings("unchecked")

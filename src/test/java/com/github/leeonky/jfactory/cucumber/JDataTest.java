@@ -65,51 +65,61 @@ class JDataTest {
     @Nested
     class TransformShould {
 
-        @Test
-        void support_datatable_to_table() {
-            Table table = jData.transform(DataTable.create(asList(
-                    asList("key1", "key2"),
-                    asList("value1", "value2")
-            )));
+        @Nested
+        class SupportYaml {
+            @Test
+            void array_to_table() throws IOException {
+                Table table = jData.transform("- name: book\n" +
+                        "- name: bicycle");
 
-            assertThat(table).hasSize(1);
-            assertThat(table).extracting("key1").containsExactly("value1");
-            assertThat(table).extracting("key2").containsExactly("value2");
+                assertThat(table).extracting("name").containsExactly("book", "bicycle");
+            }
+
+            @Test
+            void object_to_table() throws IOException {
+                Table table = jData.transform("name: book\n" +
+                        "color: red");
+
+                assertThat(table).extracting("name").containsExactly("book");
+                assertThat(table).extracting("color").containsExactly("red");
+            }
         }
 
-        @Test
-        void support_json_array_to_table() throws IOException {
-            Table table = jData.transform("[{" +
-                    "\"name\": \"book\"" +
-                    "}]");
+        @Nested
+        class SupportJson {
+            @Test
+            void array_to_table() throws IOException {
+                Table table = jData.transform("[{" +
+                        "\"name\": \"book\"" +
+                        "}]");
 
-            assertThat(table).extracting("name").containsExactly("book");
+                assertThat(table).extracting("name").containsExactly("book");
+            }
+
+            @Test
+            void object_to_table() throws IOException {
+                Table table = jData.transform("{" +
+                        "\"name\": \"book\"" +
+                        "}");
+
+                assertThat(table).extracting("name").containsExactly("book");
+            }
         }
 
-        @Test
-        void support_json_object_to_table() throws IOException {
-            Table table = jData.transform("{" +
-                    "\"name\": \"book\"" +
-                    "}");
+        @Nested
+        class SupportDataTable {
 
-            assertThat(table).extracting("name").containsExactly("book");
-        }
+            @Test
+            void to_table() {
+                Table table = jData.transform(DataTable.create(asList(
+                        asList("key1", "key2"),
+                        asList("value1", "value2")
+                )));
 
-        @Test
-        void support_yaml_array_to_table() throws IOException {
-            Table table = jData.transform("- name: book\n" +
-                    "- name: bicycle");
-
-            assertThat(table).extracting("name").containsExactly("book", "bicycle");
-        }
-
-        @Test
-        void support_yaml_object_to_table() throws IOException {
-            Table table = jData.transform("name: book\n" +
-                    "color: red");
-
-            assertThat(table).extracting("name").containsExactly("book");
-            assertThat(table).extracting("color").containsExactly("red");
+                assertThat(table).hasSize(1);
+                assertThat(table).extracting("key1").containsExactly("value1");
+                assertThat(table).extracting("key2").containsExactly("value2");
+            }
         }
     }
 
