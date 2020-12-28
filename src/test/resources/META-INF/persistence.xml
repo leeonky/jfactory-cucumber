@@ -5,6 +5,8 @@
 
     <persistence-unit name="jfactory-repo" transaction-type="RESOURCE_LOCAL">
         <class>com.github.leeonky.jfactory.cucumber.entity.Product</class>
+        <class>com.github.leeonky.jfactory.cucumber.entity.Cart</class>
+        <class>com.github.leeonky.jfactory.cucumber.entity.ProductStock</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>

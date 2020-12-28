@@ -5,5 +5,9 @@ import com.github.leeonky.jfactory.cucumber.entity.Product;
 
 public class Products {
     public static class 商品 extends Spec<Product> {
+        @Override
+        public void main() {
+            property("stocks").reverseAssociation("product");
+        }
     }
 }

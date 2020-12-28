@@ -1,6 +1,8 @@
 package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.jfactory.JFactory;
+import com.github.leeonky.jfactory.cucumber.spec.Carts;
+import com.github.leeonky.jfactory.cucumber.spec.ProductStocks;
 import com.github.leeonky.jfactory.cucumber.spec.Products;
 import com.github.leeonky.jfactory.repo.JPADataRepository;
 
@@ -16,6 +18,8 @@ public class EntityFactory extends JFactory {
         super(jpaDataRepository);
 
         register(Products.商品.class);
+        register(Carts.购物车.class);
+        register(ProductStocks.库存.class);
 
         ignoreDefaultValue(propertyWriter -> propertyWriter.getAnnotation(Id.class) != null);
     }

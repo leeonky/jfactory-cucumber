@@ -12,15 +12,13 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Product {
+public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String name;
-    private String color;
+    private String customer;
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductStock> stocks = new ArrayList<>();
+    @ManyToMany
+    private List<Product> products = new ArrayList<>();
 }
-

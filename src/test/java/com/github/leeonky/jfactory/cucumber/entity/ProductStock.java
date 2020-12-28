@@ -5,22 +5,20 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Product {
+public class ProductStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String name;
-    private String color;
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductStock> stocks = new ArrayList<>();
+    @ManyToOne
+    private Product product;
+
+    private String size;
+    private int count;
 }
-
