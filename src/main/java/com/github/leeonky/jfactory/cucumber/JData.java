@@ -32,18 +32,18 @@ public class JData {
 
     @假如("存在{string}：")
     @SuppressWarnings("unchecked")
-    public <T> List<T> prepare(String spec, Table table) {
-        return prepare(spec, table.flatSub());
+    public <T> List<T> prepare(String traitsSpec, Table table) {
+        return prepare(traitsSpec, table.flatSub());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> prepare(String spec, Map<String, ?>... data) {
-        return prepare(spec, asList(data));
+    public <T> List<T> prepare(String traitsSpec, Map<String, ?>... data) {
+        return prepare(traitsSpec, asList(data));
     }
 
     @SuppressWarnings("unchecked")
-    private <T> List<T> prepare(String spec, List<Map<String, ?>> data) {
-        return (List<T>) data.stream().map(map -> toBuild(spec).properties(map).create()).collect(toList());
+    private <T> List<T> prepare(String traitsSpec, List<Map<String, ?>> data) {
+        return (List<T>) data.stream().map(map -> toBuild(traitsSpec).properties(map).create()).collect(toList());
     }
 
     @DocStringType
@@ -69,10 +69,14 @@ public class JData {
 
     @那么("{string}数据应为：")
     public void should(String specExpression, String docString) {
+        report(dataAssert.assertData(query(specExpression), docString));
+    }
+
+    public Object query(String specExpression) {
         Collection<Object> collection = queryAll(specExpression);
         if (collection.size() > 1)
             throw new IllegalStateException(String.format("Got more than one object of `%s`", specExpression));
-        report(dataAssert.assertData(collection.iterator().next(), docString));
+        return collection.iterator().next();
     }
 
     public Collection<Object> queryAll(String specExpression) {
@@ -85,16 +89,16 @@ public class JData {
 
     @假如("存在{int}个{string}")
     @SuppressWarnings("unchecked")
-    public <T> List<T> prepare(int count, String spec) {
-        return IntStream.range(0, count).mapToObj(value -> (T) toBuild(spec).create()).collect(toList());
+    public <T> List<T> prepare(int count, String traitsSpec) {
+        return IntStream.range(0, count).mapToObj(value -> (T) toBuild(traitsSpec).create()).collect(toList());
     }
 
     private Builder<Object> toBuild(String traitsSpec) {
-        return jFactory.spec(traitsSpec);
+        return jFactory.spec(traitsSpec.split(", |,| "));
     }
 
     //TODO prepare many to many
     //TODO support English colon
     //TODO revert Table row col
-    //TODO support traits in spec prepare
+    //TODO remove row class
 }

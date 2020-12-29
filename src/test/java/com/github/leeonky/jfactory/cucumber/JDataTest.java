@@ -43,7 +43,7 @@ class JDataTest {
         void persist_object_list_with_spec_name_and_row_list() {
             jFactory.register(Products.商品.class);
 
-            List<Object> list = jData.prepare("商品",
+            List<Object> list = jData.prepare("红色的 商品",
                     Table.create(asList(
                             new Row().set("name", "book"),
                             new Row().set("name", "bicycle")
@@ -51,6 +51,7 @@ class JDataTest {
 
             assertThat(list).isEqualTo(persisted);
             assertThat(persisted).extracting("name").containsExactly("book", "bicycle");
+            assertThat(persisted).extracting("color").containsExactly("red", "red");
         }
 
         @Test
