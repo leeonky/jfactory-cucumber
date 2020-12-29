@@ -11,6 +11,7 @@ import io.cucumber.java.zh_cn.假如;
 import io.cucumber.java.zh_cn.那么;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,17 @@ public class JData {
     @DataTableType
     @SuppressWarnings("unchecked")
     public Table transform(DataTable dataTable) {
-        return create((List) dataTable.asMaps());
+        return create((List) transposeAsNeeded(dataTable).asMaps());
+    }
+
+    private DataTable transposeAsNeeded(DataTable dataTable) {
+        if (dataTable.cell(0, 0).startsWith("'")) {
+            List<List<String>> data = dataTable.transpose().asLists().stream().map(ArrayList::new).collect(toList());
+            List<String> columns = data.get(0);
+            columns.set(0, columns.get(0).substring(1));
+            dataTable = DataTable.create(data);
+        }
+        return dataTable;
     }
 
     @那么("所有{string}数据应为：")
@@ -97,8 +108,7 @@ public class JData {
         return jFactory.spec(traitsSpec.split(", |,| "));
     }
 
-    //TODO remove row class
+    //TODO revert Table row col
     //TODO prepare many to many
     //TODO support English colon
-    //TODO revert Table row col
 }

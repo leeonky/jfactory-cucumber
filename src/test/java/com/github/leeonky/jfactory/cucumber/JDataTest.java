@@ -128,6 +128,18 @@ class JDataTest {
                 assertThat(table).extracting("key1").containsExactly("value1");
                 assertThat(table).extracting("key2").containsExactly("value2");
             }
+
+            @Test
+            void to_transpose_table() {
+                Table table = jData.transform(DataTable.create(asList(
+                        asList("'key1", "value1"),
+                        asList("key2", "value2")
+                )));
+
+                assertThat(table).hasSize(1);
+                assertThat(table).extracting("key1").containsExactly("value1");
+                assertThat(table).extracting("key2").containsExactly("value2");
+            }
         }
     }
 

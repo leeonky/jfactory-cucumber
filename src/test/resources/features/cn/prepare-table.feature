@@ -23,3 +23,14 @@
       and .products[0].stocks[0].size='A4'
       and .products[0].stocks[0].count=100
     """
+
+  场景: 转置表格准备数据
+    假如存在"商品"：
+      | 'name | book | bicycle |
+      | color | red  | white   |
+    那么所有"商品"数据应为：
+    """
+      .size=2
+      and [0].name='book' and [0].color='red'
+      and [1].name='bicycle' and [1].color='white'
+    """
