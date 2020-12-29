@@ -97,8 +97,8 @@ public class JData {
         return jFactory.spec(traitsSpec.split(", |,| "));
     }
 
+    //TODO remove row class
     //TODO prepare many to many
     //TODO support English colon
     //TODO revert Table row col
-    //TODO remove row class
 }

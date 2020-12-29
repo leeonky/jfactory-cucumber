@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -45,8 +46,12 @@ class JDataTest {
 
             List<Object> list = jData.prepare("红色的 商品",
                     Table.create(asList(
-                            new Row().set("name", "book"),
-                            new Row().set("name", "bicycle")
+                            new HashMap<String, Object>() {{
+                                put("name", "book");
+                            }},
+                            new HashMap<String, Object>() {{
+                                put("name", "bicycle");
+                            }}
                     )));
 
             assertThat(list).isEqualTo(persisted);

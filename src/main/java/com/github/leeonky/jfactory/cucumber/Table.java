@@ -12,15 +12,16 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 
-public class Table extends ArrayList<Row> {
+public class Table extends ArrayList<Map<String, Object>> {
     private static final ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper();
     private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
 
-    public static Table create(List<Map<String, ?>> maps) {
-        return maps.stream().map(Row::create).collect(toCollection(Table::new));
+    public static Table create(List<Map<String, Object>> maps) {
+        return maps.stream().map(LinkedHashMap::new).collect(toCollection(Table::new));
     }
 
     @SuppressWarnings("unchecked")
@@ -55,9 +56,7 @@ public class Table extends ArrayList<Row> {
         else if (value instanceof List)
             return combineKey(flat((List<Object>) value), key, "");
         else
-            return new HashMap<String, Object>() {{
-                put(key, value);
-            }};
+            return singletonMap(key, value);
     }
 
     private Map<String, Object> combineKey(Map<String, Object> sub, String key, String dot) {
