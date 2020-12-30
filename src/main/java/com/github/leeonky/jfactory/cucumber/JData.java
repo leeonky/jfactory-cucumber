@@ -85,8 +85,8 @@ public class JData {
 
     public Object query(String specExpression) {
         Collection<Object> collection = queryAll(specExpression);
-        if (collection.size() > 1)
-            throw new IllegalStateException(String.format("Got more than one object of `%s`", specExpression));
+        if (collection.size() != 1)
+            throw new IllegalStateException(String.format("Got %d object of `%s`", collection.size(), specExpression));
         return collection.iterator().next();
     }
 
