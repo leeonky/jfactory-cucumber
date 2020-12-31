@@ -2,7 +2,9 @@ package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.jfactory.DataRepository;
 import com.github.leeonky.jfactory.JFactory;
+import com.github.leeonky.jfactory.cucumber.entity.Cart;
 import com.github.leeonky.jfactory.cucumber.entity.Product;
+import com.github.leeonky.jfactory.cucumber.spec.Carts;
 import com.github.leeonky.jfactory.cucumber.spec.Products;
 import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Nested;
@@ -67,6 +69,29 @@ class JDataTest {
 
             assertThat(list).hasSize(2);
             assertThat(list).allMatch(Product.class::isInstance);
+        }
+
+        @Nested
+        class Attachment {
+
+            @Test
+            void support_create_sub_children_list() {
+                jFactory = new JFactory();
+                jFactory.register(Products.商品.class);
+                Cart cart = jFactory.spec(Carts.购物车.class).property("customer", "Tom").create();
+
+                List<Product> products = new JData(jFactory).prepareAttachments("购物车.customer[Tom].products", "商品", asList(
+                        new HashMap<String, Object>() {{
+                            put("name", "book");
+                        }}
+                ));
+
+                assertThat(cart.getProducts()).containsAll(products);
+            }
+
+            //TODO no collection property
+            //TODO one to one
+            //TODO reverse mapping
         }
     }
 

@@ -34,3 +34,20 @@
       and [0].name='book' and [0].color='red'
       and [1].name='bicycle' and [1].color='white'
     """
+
+  场景: 为已有数据添加多对多关联
+    假如存在"购物车"：
+      | customer | products[0](商品).name |
+      | Tom      | book                 |
+    假如存在"购物车.customer[Tom].products"的"商品"：
+      | name    |
+      | bicycle |
+    那么"购物车"数据应为：
+    """
+      .customer='Tom'
+      and .products.size=2
+      and .products[0].name='book'
+      and .products[1].name='bicycle'
+    """
+
+#    假如存在"库存"，并且其"product"为"商品.name[book]"：

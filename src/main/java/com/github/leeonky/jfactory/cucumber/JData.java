@@ -4,6 +4,8 @@ import com.github.leeonky.dal.AssertResult;
 import com.github.leeonky.dal.DataAssert;
 import com.github.leeonky.jfactory.Builder;
 import com.github.leeonky.jfactory.JFactory;
+import com.github.leeonky.util.BeanClass;
+import com.github.leeonky.util.PropertyReader;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.DocStringType;
@@ -104,11 +106,22 @@ public class JData {
         return IntStream.range(0, count).mapToObj(value -> (T) toBuild(traitsSpec).create()).collect(toList());
     }
 
+    @假如("存在{string}的{string}：")
+    public <T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data) {
+        int index = specExpressionProperty.lastIndexOf('.');
+        Object parent = query(specExpressionProperty.substring(0, index));
+        String property = specExpressionProperty.substring(index + 1);
+        PropertyReader propertyReader = BeanClass.create(parent.getClass()).getPropertyReader(property);
+        List<T> attachments = prepare(traitsSpec, data);
+        ((Collection) propertyReader.getValue(parent)).addAll(attachments);
+        jFactory.getDataRepository().save(parent);
+        return attachments;
+    }
+
     private Builder<Object> toBuild(String traitsSpec) {
         return jFactory.spec(traitsSpec.split(", |,| "));
     }
 
-    //TODO revert Table row col
     //TODO prepare many to many
     //TODO support English colon
 }
