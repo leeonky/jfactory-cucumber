@@ -85,19 +85,20 @@ public class JData {
         report(dataAssert.assertData(query(specExpression), docString));
     }
 
-    public Object query(String specExpression) {
-        Collection<Object> collection = queryAll(specExpression);
+    public <T> T query(String specExpression) {
+        Collection<T> collection = queryAll(specExpression);
         if (collection.size() != 1)
             throw new IllegalStateException(String.format("Got %d object of `%s`", collection.size(), specExpression));
         return collection.iterator().next();
     }
 
-    public Collection<Object> queryAll(String specExpression) {
+    @SuppressWarnings("unchecked")
+    public <T> Collection<T> queryAll(String specExpression) {
         Matcher matcher = Pattern.compile("([^\\.]*)\\.(.*)\\[(.*)\\]").matcher(specExpression);
         if (matcher.find())
-            return jFactory.spec(matcher.group(1)).property(matcher.group(2), matcher.group(3)).queryAll();
+            return (Collection<T>) jFactory.spec(matcher.group(1)).property(matcher.group(2), matcher.group(3)).queryAll();
         else
-            return jFactory.spec(specExpression).queryAll();
+            return (Collection<T>) jFactory.spec(specExpression).queryAll();
     }
 
     @假如("存在{int}个{string}")
@@ -107,13 +108,18 @@ public class JData {
     }
 
     @假如("存在{string}的{string}：")
+    @SuppressWarnings("unchecked")
     public <T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data) {
         int index = specExpressionProperty.lastIndexOf('.');
         Object parent = query(specExpressionProperty.substring(0, index));
         String property = specExpressionProperty.substring(index + 1);
-        PropertyReader propertyReader = BeanClass.create(parent.getClass()).getPropertyReader(property);
+        BeanClass beanClass = BeanClass.create(parent.getClass());
+        PropertyReader propertyReader = beanClass.getPropertyReader(property);
         List<T> attachments = prepare(traitsSpec, data);
-        ((Collection) propertyReader.getValue(parent)).addAll(attachments);
+        if (Collection.class.isAssignableFrom(propertyReader.getType().getType()))
+            ((Collection) propertyReader.getValue(parent)).addAll(attachments);
+        else
+            beanClass.setPropertyValue(parent, property, attachments.get(0));
         jFactory.getDataRepository().save(parent);
         return attachments;
     }

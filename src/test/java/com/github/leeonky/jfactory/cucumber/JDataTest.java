@@ -91,6 +91,7 @@ class JDataTest {
 
             //TODO no collection property
             //TODO one to one
+            //TODO one to one but give a 2 row table
             //TODO reverse mapping
         }
     }
