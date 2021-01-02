@@ -3,8 +3,10 @@ package com.github.leeonky.jfactory.cucumber;
 import com.github.leeonky.jfactory.DataRepository;
 import com.github.leeonky.jfactory.JFactory;
 import com.github.leeonky.jfactory.cucumber.entity.Cart;
+import com.github.leeonky.jfactory.cucumber.entity.Order;
 import com.github.leeonky.jfactory.cucumber.entity.Product;
 import com.github.leeonky.jfactory.cucumber.spec.Carts;
+import com.github.leeonky.jfactory.cucumber.spec.Orders;
 import com.github.leeonky.jfactory.cucumber.spec.Products;
 import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Nested;
@@ -89,8 +91,22 @@ class JDataTest {
                 assertThat(cart.getProducts()).containsAll(products);
             }
 
+            @Test
+            void support_create_sub_child() {
+                jFactory = new JFactory();
+                jFactory.register(Products.商品.class);
+                Order order = jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
+
+                List<Product> products = new JData(jFactory).prepareAttachments("订单.customer[Tom].product", "商品", asList(
+                        new HashMap<String, Object>() {{
+                            put("name", "book");
+                        }}
+                ));
+
+                assertThat(order.getProduct()).isEqualTo(products.get(0));
+            }
+
             //TODO no collection property
-            //TODO one to one
             //TODO one to one but give a 2 row table
             //TODO reverse mapping
         }

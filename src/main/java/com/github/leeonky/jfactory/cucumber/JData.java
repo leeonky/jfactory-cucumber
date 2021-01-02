@@ -5,7 +5,7 @@ import com.github.leeonky.dal.DataAssert;
 import com.github.leeonky.jfactory.Builder;
 import com.github.leeonky.jfactory.JFactory;
 import com.github.leeonky.util.BeanClass;
-import com.github.leeonky.util.PropertyReader;
+import com.github.leeonky.util.Property;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.DocStringType;
@@ -108,24 +108,39 @@ public class JData {
     }
 
     @假如("存在{string}的{string}：")
-    @SuppressWarnings("unchecked")
     public <T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data) {
-        int index = specExpressionProperty.lastIndexOf('.');
-        Object parent = query(specExpressionProperty.substring(0, index));
-        String property = specExpressionProperty.substring(index + 1);
-        BeanClass beanClass = BeanClass.create(parent.getClass());
-        PropertyReader propertyReader = beanClass.getPropertyReader(property);
+        BeanProperty beanProperty = new BeanProperty(specExpressionProperty);
         List<T> attachments = prepare(traitsSpec, data);
-        if (Collection.class.isAssignableFrom(propertyReader.getType().getType()))
-            ((Collection) propertyReader.getValue(parent)).addAll(attachments);
-        else
-            beanClass.setPropertyValue(parent, property, attachments.get(0));
-        jFactory.getDataRepository().save(parent);
+        beanProperty.attach(attachments);
+        jFactory.getDataRepository().save(beanProperty.getBean());
         return attachments;
     }
 
     private Builder<Object> toBuild(String traitsSpec) {
         return jFactory.spec(traitsSpec.split(", |,| "));
+    }
+
+    private class BeanProperty {
+        private Object bean;
+        private Property property;
+
+        public BeanProperty(String specExpressionProperty) {
+            int index = specExpressionProperty.lastIndexOf('.');
+            bean = query(specExpressionProperty.substring(0, index));
+            property = BeanClass.create(bean.getClass()).getProperty(specExpressionProperty.substring(index + 1));
+        }
+
+        public Object getBean() {
+            return bean;
+        }
+
+        @SuppressWarnings("unchecked")
+        private void attach(List<?> attachments) {
+            if (Collection.class.isAssignableFrom(property.getReaderType().getType()))
+                ((Collection) property.getValue(getBean())).addAll(attachments);
+            else
+                property.setValue(getBean(), attachments.get(0));
+        }
     }
 
     //TODO prepare many to many
