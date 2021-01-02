@@ -13,17 +13,14 @@ import io.cucumber.java.zh_cn.假如;
 import io.cucumber.java.zh_cn.那么;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 import static com.github.leeonky.jfactory.cucumber.Table.create;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
 
 public class JData {
     private final JFactory jFactory;
@@ -102,9 +99,12 @@ public class JData {
     }
 
     @假如("存在{int}个{string}")
-    @SuppressWarnings("unchecked")
     public <T> List<T> prepare(int count, String traitsSpec) {
-        return IntStream.range(0, count).mapToObj(value -> (T) toBuild(traitsSpec).create()).collect(toList());
+        return prepare(traitsSpec, defaultProperties(count));
+    }
+
+    private List<Map<String, ?>> defaultProperties(int count) {
+        return range(0, count).mapToObj(i -> new HashMap<String, Object>()).collect(toList());
     }
 
     @假如("存在{string}的{string}：")
@@ -114,6 +114,11 @@ public class JData {
         beanProperty.attach(attachments);
         jFactory.getDataRepository().save(beanProperty.getBean());
         return attachments;
+    }
+
+    @假如("存在{string}的{int}个{string}")
+    public <T> List<T> prepareAttachments(String specExpressionProperty, int count, String traitsSpec) {
+        return prepareAttachments(specExpressionProperty, traitsSpec, defaultProperties(count));
     }
 
     private Builder<Object> toBuild(String traitsSpec) {

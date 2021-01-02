@@ -63,4 +63,15 @@
       and .product.name='bicycle'
     """
 
+  场景: 为已有数据添加默认关联
+    假如存在"购物车"：
+      | customer | products[0](商品).name |
+      | Tom      | book                 |
+    假如存在"购物车.customer[Tom].products"的1个"商品"
+    那么"购物车"数据应为：
+    """
+      .customer='Tom'
+      and .products.size=2
+    """
+
 #    假如存在"库存"，并且其"product"为"商品.name[book]"：
