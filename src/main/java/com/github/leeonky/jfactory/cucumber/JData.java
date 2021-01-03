@@ -1,6 +1,7 @@
 package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.dal.AssertResult;
+import com.github.leeonky.dal.DalException;
 import com.github.leeonky.dal.DataAssert;
 import com.github.leeonky.jfactory.Builder;
 import com.github.leeonky.jfactory.JFactory;
@@ -79,7 +80,14 @@ public class JData {
 
     @那么("{string}数据应为：")
     public void should(String specExpression, String docString) {
-        report(dataAssert.assertData(query(specExpression), docString));
+        try {
+            report(dataAssert.assertData(query(specExpression), docString));
+        } catch (DalException e) {
+            //TODO improve message format
+            throw new RuntimeException(e.getMessage() + "\n" + docString + "\n"
+                    + String.join("", Collections.nCopies(e.getPosition(), "" +
+                    " ")) + "^", e);
+        }
     }
 
     public <T> T query(String specExpression) {
@@ -121,6 +129,15 @@ public class JData {
         return prepareAttachments(specExpressionProperty, traitsSpec, defaultProperties(count));
     }
 
+    @假如("存在如下{string}，并且其{string}为{string}：")
+    public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String specExpression,
+                                          List<Map<String, ?>> data) {
+        List<Map<String, ?>> dataWithAssociation = data.stream().map(m -> new LinkedHashMap<String, Object>(m))
+                .peek(m -> m.put(reverseAssociationProperty, query(specExpression)))
+                .collect(toList());
+        return prepare(traitsSpec, dataWithAssociation);
+    }
+
     private Builder<Object> toBuild(String traitsSpec) {
         return jFactory.spec(traitsSpec.split(", |,| "));
     }
@@ -148,6 +165,7 @@ public class JData {
         }
     }
 
-    //TODO prepare many to many
+    //TODO prepare one to many
     //TODO support English colon
+    //TODO move query queryall to class
 }

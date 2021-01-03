@@ -39,7 +39,7 @@
     假如存在"购物车"：
       | customer | products[0](商品).name |
       | Tom      | book                 |
-    假如存在"购物车.customer[Tom].products"的"商品"：
+    并且存在"购物车.customer[Tom].products"的"商品"：
       | name    |
       | bicycle |
     那么"购物车"数据应为：
@@ -54,7 +54,7 @@
     假如存在"订单"：
       | customer |
       | Tom      |
-    假如存在"订单.customer[Tom].product"的"商品"：
+    并且存在"订单.customer[Tom].product"的"商品"：
       | name    |
       | bicycle |
     那么"订单"数据应为：
@@ -67,11 +67,23 @@
     假如存在"购物车"：
       | customer | products[0](商品).name |
       | Tom      | book                 |
-    假如存在"购物车.customer[Tom].products"的1个"商品"
+    并且存在"购物车.customer[Tom].products"的1个"商品"
     那么"购物车"数据应为：
     """
       .customer='Tom'
       and .products.size=2
     """
 
-#    假如存在"库存"，并且其"product"为"商品.name[book]"：
+  场景: 为已有数据添加反向一对多关联
+    假如存在"商品"：
+      | name |
+      | book |
+    并且存在如下"库存"，并且其"product"为"商品.name[book]"：
+      | size | count |
+      | A3   | 10    |
+    那么"商品"数据应为：
+    """
+      .stocks.size=1
+      and .stocks[0].size='A3'
+      and .stocks[0].count=10
+    """

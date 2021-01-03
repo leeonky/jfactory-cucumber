@@ -5,8 +5,10 @@ import com.github.leeonky.jfactory.JFactory;
 import com.github.leeonky.jfactory.cucumber.entity.Cart;
 import com.github.leeonky.jfactory.cucumber.entity.Order;
 import com.github.leeonky.jfactory.cucumber.entity.Product;
+import com.github.leeonky.jfactory.cucumber.entity.ProductStock;
 import com.github.leeonky.jfactory.cucumber.spec.Carts;
 import com.github.leeonky.jfactory.cucumber.spec.Orders;
+import com.github.leeonky.jfactory.cucumber.spec.ProductStocks;
 import com.github.leeonky.jfactory.cucumber.spec.Products;
 import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Nested;
@@ -104,6 +106,23 @@ class JDataTest {
                 ));
 
                 assertThat(order.getProduct()).isEqualTo(products.get(0));
+            }
+
+            @Test
+            void support_create_reverse_mapping_sub_children_list() {
+                jFactory = new JFactory();
+                jFactory.register(ProductStocks.库存.class);
+                Product product = jFactory.spec(Products.商品.class).property("name", "book").create();
+
+                List<ProductStock> stocks = new JData(jFactory).prepareAttachments("库存", "product", "商品.name[book]", asList(
+                        new HashMap<String, Object>() {{
+                            put("size", "A4");
+                        }}
+                ));
+
+                assertThat(stocks)
+                        .hasSize(1)
+                        .extracting("product").containsExactly(product);
             }
 
             //TODO no collection property
