@@ -126,10 +126,15 @@ public class JData {
         return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, specExpression, data));
     }
 
+    @假如("存在{int}个{string}，并且其{string}为{string}")
+    public <T> List<T> prepareAttachments(int count, String traitsSpec, String reverseAssociationProperty,
+                                          String specExpression) {
+        return prepareAttachments(traitsSpec, reverseAssociationProperty, specExpression, defaultProperties(count));
+    }
+
     private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String specExpression,
                                                         List<Map<String, ?>> data) {
-        return data.stream().map(m -> new LinkedHashMap<String, Object>(m))
-                .peek(m -> m.put(reverseAssociationProperty, query(specExpression)))
+        return data.stream().map(LinkedHashMap::new).peek(m -> m.put(reverseAssociationProperty, query(specExpression)))
                 .collect(toList());
     }
 

@@ -35,7 +35,7 @@
       and [1].name='bicycle' and [1].color='white'
     """
 
-  场景: 为已有数据添加多对多关联
+  场景: 为已有数据添加多对多关联数据
     假如存在"购物车"：
       | customer | products[0](商品).name |
       | Tom      | book                 |
@@ -50,7 +50,7 @@
       and .products[1].name='bicycle'
     """
 
-  场景: 为已有数据添加一对一关联
+  场景: 为已有数据添加一对一关联数据
     假如存在"订单"：
       | customer |
       | Tom      |
@@ -63,7 +63,7 @@
       and .product.name='bicycle'
     """
 
-  场景: 为已有数据添加默认关联
+  场景: 为已有数据添加默认关联数据
     假如存在"购物车"：
       | customer | products[0](商品).name |
       | Tom      | book                 |
@@ -74,7 +74,7 @@
       and .products.size=2
     """
 
-  场景: 为已有数据添加反向一对多关联
+  场景: 为已有数据添加反向一对多关联数据
     假如存在"商品"：
       | name |
       | book |
@@ -86,4 +86,14 @@
       .stocks.size=1
       and .stocks[0].size='A3'
       and .stocks[0].count=10
+    """
+
+  场景: 为已有数据添加反向一对多默认关联数据
+    假如存在"商品"：
+      | name |
+      | book |
+    并且存在1个"库存"，并且其"product"为"商品.name[book]"
+    那么"商品"数据应为：
+    """
+      .stocks.size=1
     """

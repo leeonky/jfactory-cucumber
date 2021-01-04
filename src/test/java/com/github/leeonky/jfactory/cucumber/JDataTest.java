@@ -110,7 +110,17 @@ class JDataTest {
             }
 
             @Test
-            void support_create_reverse_mapping_sub_children_list() {
+            void support_create_sub_default_children_list() {
+                jFactory.register(Products.商品.class);
+                Cart cart = jFactory.spec(Carts.购物车.class).property("customer", "Tom").create();
+
+                List<Product> products = jData.prepareAttachments("购物车.customer[Tom].products", 1, "商品");
+
+                assertThat(cart.getProducts()).containsAll(products);
+            }
+
+            @Test
+            void support_create_reverse_associated_sub_children_list() {
                 jFactory.register(ProductStocks.库存.class);
                 Product product = jFactory.spec(Products.商品.class).property("name", "book").create();
 
@@ -119,6 +129,18 @@ class JDataTest {
                             put("size", "A4");
                         }}
                 ));
+
+                assertThat(stocks)
+                        .hasSize(1)
+                        .extracting("product").containsExactly(product);
+            }
+
+            @Test
+            void support_create_reverse_associated_default_sub_children_list() {
+                jFactory.register(ProductStocks.库存.class);
+                Product product = jFactory.spec(Products.商品.class).property("name", "book").create();
+
+                List<ProductStock> stocks = jData.prepareAttachments(1, "库存", "product", "商品.name[book]");
 
                 assertThat(stocks)
                         .hasSize(1)
