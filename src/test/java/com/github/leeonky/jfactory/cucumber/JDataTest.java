@@ -6,10 +6,10 @@ import com.github.leeonky.jfactory.cucumber.entity.Cart;
 import com.github.leeonky.jfactory.cucumber.entity.Order;
 import com.github.leeonky.jfactory.cucumber.entity.Product;
 import com.github.leeonky.jfactory.cucumber.entity.ProductStock;
-import com.github.leeonky.jfactory.cucumber.spec.Carts;
-import com.github.leeonky.jfactory.cucumber.spec.Orders;
-import com.github.leeonky.jfactory.cucumber.spec.ProductStocks;
-import com.github.leeonky.jfactory.cucumber.spec.Products;
+import com.github.leeonky.jfactory.cucumber.factory.Carts;
+import com.github.leeonky.jfactory.cucumber.factory.Orders;
+import com.github.leeonky.jfactory.cucumber.factory.ProductStocks;
+import com.github.leeonky.jfactory.cucumber.factory.Products;
 import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JDataTest {
@@ -60,9 +61,8 @@ class JDataTest {
                             }}
                     )));
 
-            assertThat(list).isEqualTo(persisted);
-            assertThat(persisted).extracting("name").containsExactly("book", "bicycle");
-            assertThat(persisted).extracting("color").containsExactly("red", "red");
+            assertThat(list).isEqualTo(persisted)
+                    .extracting("name", "color").containsExactly(tuple("book", "red"), tuple("bicycle", "red"));
         }
 
         @Test
@@ -71,20 +71,22 @@ class JDataTest {
 
             List<Object> list = jData.prepare(2, "商品");
 
-            assertThat(list).hasSize(2);
-            assertThat(list).allMatch(Product.class::isInstance);
+            assertThat(list)
+                    .hasSize(2)
+                    .allMatch(Product.class::isInstance);
         }
 
         @Nested
         class Attachment {
+            private JFactory jFactory = new JFactory();
+            private JData jData = new JData(jFactory);
 
             @Test
             void support_create_sub_children_list() {
-                jFactory = new JFactory();
                 jFactory.register(Products.商品.class);
                 Cart cart = jFactory.spec(Carts.购物车.class).property("customer", "Tom").create();
 
-                List<Product> products = new JData(jFactory).prepareAttachments("购物车.customer[Tom].products", "商品", asList(
+                List<Product> products = jData.prepareAttachments("购物车.customer[Tom].products", "商品", asList(
                         new HashMap<String, Object>() {{
                             put("name", "book");
                         }}
@@ -95,11 +97,10 @@ class JDataTest {
 
             @Test
             void support_create_sub_child() {
-                jFactory = new JFactory();
                 jFactory.register(Products.商品.class);
                 Order order = jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
 
-                List<Product> products = new JData(jFactory).prepareAttachments("订单.customer[Tom].product", "商品", asList(
+                List<Product> products = jData.prepareAttachments("订单.customer[Tom].product", "商品", asList(
                         new HashMap<String, Object>() {{
                             put("name", "book");
                         }}
@@ -110,11 +111,10 @@ class JDataTest {
 
             @Test
             void support_create_reverse_mapping_sub_children_list() {
-                jFactory = new JFactory();
                 jFactory.register(ProductStocks.库存.class);
                 Product product = jFactory.spec(Products.商品.class).property("name", "book").create();
 
-                List<ProductStock> stocks = new JData(jFactory).prepareAttachments("库存", "product", "商品.name[book]", asList(
+                List<ProductStock> stocks = jData.prepareAttachments("库存", "product", "商品.name[book]", asList(
                         new HashMap<String, Object>() {{
                             put("size", "A4");
                         }}
@@ -136,6 +136,7 @@ class JDataTest {
 
         @Nested
         class SupportYaml {
+
             @Test
             void array_to_table() throws IOException {
                 Table table = jData.transform("- name: book\n" +
@@ -149,13 +150,13 @@ class JDataTest {
                 Table table = jData.transform("name: book\n" +
                         "color: red");
 
-                assertThat(table).extracting("name").containsExactly("book");
-                assertThat(table).extracting("color").containsExactly("red");
+                assertThat(table).extracting("name", "color").containsExactly(tuple("book", "red"));
             }
         }
 
         @Nested
         class SupportJson {
+
             @Test
             void array_to_table() throws IOException {
                 Table table = jData.transform("[{" +
@@ -185,9 +186,8 @@ class JDataTest {
                         asList("value1", "value2")
                 )));
 
-                assertThat(table).hasSize(1);
-                assertThat(table).extracting("key1").containsExactly("value1");
-                assertThat(table).extracting("key2").containsExactly("value2");
+                assertThat(table).hasSize(1)
+                        .extracting("key1", "key2").containsExactly(tuple("value1", "value2"));
             }
 
             @Test
@@ -197,9 +197,8 @@ class JDataTest {
                         asList("key2", "value2")
                 )));
 
-                assertThat(table).hasSize(1);
-                assertThat(table).extracting("key1").containsExactly("value1");
-                assertThat(table).extracting("key2").containsExactly("value2");
+                assertThat(table).hasSize(1)
+                        .extracting("key1", "key2").containsExactly(tuple("value1", "value2"));
             }
         }
     }

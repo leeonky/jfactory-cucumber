@@ -1,10 +1,10 @@
 package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.jfactory.JFactory;
-import com.github.leeonky.jfactory.cucumber.spec.Carts;
-import com.github.leeonky.jfactory.cucumber.spec.Orders;
-import com.github.leeonky.jfactory.cucumber.spec.ProductStocks;
-import com.github.leeonky.jfactory.cucumber.spec.Products;
+import com.github.leeonky.jfactory.cucumber.factory.Carts;
+import com.github.leeonky.jfactory.cucumber.factory.Orders;
+import com.github.leeonky.jfactory.cucumber.factory.ProductStocks;
+import com.github.leeonky.jfactory.cucumber.factory.Products;
 import com.github.leeonky.jfactory.repo.JPADataRepository;
 
 import javax.persistence.EntityManager;

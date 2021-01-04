@@ -55,17 +55,19 @@ public class JData {
     @DataTableType
     @SuppressWarnings("unchecked")
     public Table transform(DataTable dataTable) {
-        return create((List) transposeAsNeeded(dataTable).asMaps());
+        if (needTranspose(dataTable))
+            dataTable = DataTable.create(removeTransposeSymbol(dataTable));
+        return create((List) dataTable.asMaps());
     }
 
-    private DataTable transposeAsNeeded(DataTable dataTable) {
-        if (dataTable.cell(0, 0).startsWith("'")) {
-            List<List<String>> data = dataTable.transpose().asLists().stream().map(ArrayList::new).collect(toList());
-            List<String> columns = data.get(0);
-            columns.set(0, columns.get(0).substring(1));
-            dataTable = DataTable.create(data);
-        }
-        return dataTable;
+    private List<List<String>> removeTransposeSymbol(DataTable dataTable) {
+        List<List<String>> data = dataTable.transpose().asLists().stream().map(ArrayList::new).collect(toList());
+        data.get(0).set(0, data.get(0).get(0).substring(1));
+        return data;
+    }
+
+    private boolean needTranspose(DataTable dataTable) {
+        return dataTable.cell(0, 0).startsWith("'");
     }
 
     @那么("所有{string}数据应为：")
