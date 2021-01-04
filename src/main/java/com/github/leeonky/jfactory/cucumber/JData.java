@@ -72,40 +72,33 @@ public class JData {
 
     @那么("所有{string}数据应为：")
     public void allShould(String spec, String docString) {
-        report(dataAssert.assertData(queryAll(spec), docString));
-    }
-
-    private void report(AssertResult assertResult) {
-        if (!assertResult.isPassed())
-            throw new AssertionError(assertResult.getMessage());
+        assertData(queryAll(spec), docString);
     }
 
     @那么("{string}数据应为：")
     public void should(String specExpression, String docString) {
+        assertData(query(specExpression), docString);
+    }
+
+    private void assertData(Object query, String expression) {
         try {
-            report(dataAssert.assertData(query(specExpression), docString));
+            AssertResult assertResult = dataAssert.assertData(query, expression);
+            if (!assertResult.isPassed())
+                throw new AssertionError(assertResult.getMessage());
         } catch (DalException e) {
             //TODO improve message format
-            throw new RuntimeException(e.getMessage() + "\n" + docString + "\n"
+            throw new RuntimeException(e.getMessage() + "\n" + expression + "\n"
                     + String.join("", Collections.nCopies(e.getPosition(), "" +
                     " ")) + "^", e);
         }
     }
 
     public <T> T query(String specExpression) {
-        Collection<T> collection = queryAll(specExpression);
-        if (collection.size() != 1)
-            throw new IllegalStateException(String.format("Got %d object of `%s`", collection.size(), specExpression));
-        return collection.iterator().next();
+        return new SpecExpression(specExpression).query();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Collection<T> queryAll(String specExpression) {
-        Matcher matcher = Pattern.compile("([^\\.]*)\\.(.*)\\[(.*)\\]").matcher(specExpression);
-        if (matcher.find())
-            return (Collection<T>) jFactory.spec(matcher.group(1)).property(matcher.group(2), matcher.group(3)).queryAll();
-        else
-            return (Collection<T>) jFactory.spec(specExpression).queryAll();
+        return new SpecExpression(specExpression).queryAll();
     }
 
     @假如("存在{int}个{string}")
@@ -119,11 +112,7 @@ public class JData {
 
     @假如("存在{string}的{string}：")
     public <T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data) {
-        BeanProperty beanProperty = new BeanProperty(specExpressionProperty);
-        List<T> attachments = prepare(traitsSpec, data);
-        beanProperty.attach(attachments);
-        jFactory.getDataRepository().save(beanProperty.getBean());
-        return attachments;
+        return new BeanProperty(specExpressionProperty).attach(prepare(traitsSpec, data));
     }
 
     @假如("存在{string}的{int}个{string}")
@@ -134,10 +123,14 @@ public class JData {
     @假如("存在如下{string}，并且其{string}为{string}：")
     public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String specExpression,
                                           List<Map<String, ?>> data) {
-        List<Map<String, ?>> dataWithAssociation = data.stream().map(m -> new LinkedHashMap<String, Object>(m))
+        return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, specExpression, data));
+    }
+
+    private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String specExpression,
+                                                        List<Map<String, ?>> data) {
+        return data.stream().map(m -> new LinkedHashMap<String, Object>(m))
                 .peek(m -> m.put(reverseAssociationProperty, query(specExpression)))
                 .collect(toList());
-        return prepare(traitsSpec, dataWithAssociation);
     }
 
     private Builder<Object> toBuild(String traitsSpec) {
@@ -154,20 +147,45 @@ public class JData {
             property = BeanClass.create(bean.getClass()).getProperty(specExpressionProperty.substring(index + 1));
         }
 
-        public Object getBean() {
-            return bean;
+        @SuppressWarnings("unchecked")
+        private <T> List<T> attach(List<T> attachments) {
+            if (Collection.class.isAssignableFrom(property.getReaderType().getType()))
+                ((Collection) property.getValue(bean)).addAll(attachments);
+            else
+                property.setValue(bean, attachments.get(0));
+            jFactory.getDataRepository().save(bean);
+            return attachments;
+        }
+    }
+
+    private class SpecExpression {
+        private final String expression;
+        private final String traitsSpec;
+        private final Map<String, Object> properties = new LinkedHashMap<>();
+
+        public SpecExpression(String expression) {
+            Matcher matcher = Pattern.compile("([^\\.]*)\\.(.*)\\[(.*)\\]").matcher(expression);
+            this.expression = expression;
+            if (matcher.find()) {
+                traitsSpec = matcher.group(1);
+                properties.put(matcher.group(2), matcher.group(3));
+            } else
+                traitsSpec = expression;
         }
 
         @SuppressWarnings("unchecked")
-        private void attach(List<?> attachments) {
-            if (Collection.class.isAssignableFrom(property.getReaderType().getType()))
-                ((Collection) property.getValue(getBean())).addAll(attachments);
-            else
-                property.setValue(getBean(), attachments.get(0));
+        public <T> Collection<T> queryAll() {
+            return (Collection<T>) jFactory.spec(traitsSpec).properties(properties).queryAll();
+        }
+
+        public <T> T query() {
+            Collection<T> collection = queryAll();
+            if (collection.size() != 1)
+                throw new IllegalStateException(String.format("Got %d object of `%s`", collection.size(), expression));
+            return collection.iterator().next();
         }
     }
 
     //TODO prepare one to many
     //TODO support English colon
-    //TODO move query queryall to class
 }
