@@ -147,9 +147,7 @@ class JDataTest {
                         .extracting("product").containsExactly(product);
             }
 
-            //TODO no collection property
             //TODO one to one but give a 2 row table
-            //TODO reverse mapping
         }
     }
 

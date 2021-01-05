@@ -32,6 +32,7 @@ public class JData {
     }
 
     @假如("存在{string}：")
+    @假如("存在{string}:")
     @SuppressWarnings("unchecked")
     public <T> List<T> prepare(String traitsSpec, Table table) {
         return prepare(traitsSpec, table.flatSub());
@@ -71,11 +72,13 @@ public class JData {
     }
 
     @那么("所有{string}数据应为：")
+    @那么("所有{string}数据应为:")
     public void allShould(String spec, String docString) {
         assertData(queryAll(spec), docString);
     }
 
     @那么("{string}数据应为：")
+    @那么("{string}数据应为:")
     public void should(String specExpression, String docString) {
         assertData(query(specExpression), docString);
     }
@@ -108,6 +111,7 @@ public class JData {
     }
 
     @假如("存在{string}的{string}：")
+    @假如("存在{string}的{string}:")
     public <T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data) {
         return new BeanProperty(specExpressionProperty).attach(prepare(traitsSpec, data));
     }
@@ -118,12 +122,14 @@ public class JData {
     }
 
     @假如("存在如下{string}，并且其{string}为{string}：")
+    @假如("存在如下{string}, 并且其{string}为{string}:")
     public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String specExpression,
                                           List<Map<String, ?>> data) {
         return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, specExpression, data));
     }
 
     @假如("存在{int}个{string}，并且其{string}为{string}")
+    @假如("存在{int}个{string}, 并且其{string}为{string}")
     public <T> List<T> prepareAttachments(int count, String traitsSpec, String reverseAssociationProperty,
                                           String specExpression) {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, specExpression, defaultProperties(count));
@@ -187,6 +193,4 @@ public class JData {
             return collection.iterator().next();
         }
     }
-
-    //TODO support English colon
 }
