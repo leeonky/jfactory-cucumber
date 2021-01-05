@@ -54,7 +54,7 @@ repositories {
 
 dependencies {
     implementation 'com.github.leeonky:jfactory:0.1.0'
-    implementation 'com.github.leeonky:DAL-java:0.0.14'
+    implementation 'com.github.leeonky:DAL-java:0.0.15'
     implementation 'com.github.leeonky:bean-util:0.2.2'
 
     implementation "io.cucumber:cucumber-java:${libVersions.cucumberJVM}"

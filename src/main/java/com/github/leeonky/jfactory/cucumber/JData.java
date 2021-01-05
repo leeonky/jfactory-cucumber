@@ -86,10 +86,7 @@ public class JData {
             if (!assertResult.isPassed())
                 throw new AssertionError(assertResult.getMessage());
         } catch (DalException e) {
-            //TODO improve message format
-            throw new RuntimeException(e.getMessage() + "\n" + expression + "\n"
-                    + String.join("", Collections.nCopies(e.getPosition(), "" +
-                    " ")) + "^", e);
+            throw new RuntimeException(e.getMessage() + ":\n" + e.show(expression));
         }
     }
 
@@ -191,6 +188,5 @@ public class JData {
         }
     }
 
-    //TODO prepare one to many
     //TODO support English colon
 }
