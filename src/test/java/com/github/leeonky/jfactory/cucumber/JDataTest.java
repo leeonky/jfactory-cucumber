@@ -147,7 +147,21 @@ class JDataTest {
                         .extracting("product").containsExactly(product);
             }
 
-            //TODO one to one but give a 2 row table
+
+            @Test
+            void should_raise_error_when_give_more_than_one_bean_for_one_to_one_relation() {
+                jFactory.register(Products.商品.class);
+                jFactory.spec(Orders.订单.class).property("customer", "Tom").create();
+
+                assertThrows(RuntimeException.class, () -> jData.prepareAttachments("订单.customer[Tom].product", "商品",
+                        asList(new HashMap<String, Object>() {{
+                                   put("name", "book");
+                               }},
+                                new HashMap<String, Object>() {{
+                                    put("name", "bicycle");
+                                }}
+                        )));
+            }
         }
     }
 

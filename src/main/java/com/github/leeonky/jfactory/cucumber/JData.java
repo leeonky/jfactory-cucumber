@@ -159,8 +159,11 @@ public class JData {
         private <T> List<T> attach(List<T> attachments) {
             if (Collection.class.isAssignableFrom(property.getReaderType().getType()))
                 ((Collection) property.getValue(bean)).addAll(attachments);
-            else
+            else {
+                if (attachments.size() != 1)
+                    throw new IllegalStateException("More than one candidates");
                 property.setValue(bean, attachments.get(0));
+            }
             jFactory.getDataRepository().save(bean);
             return attachments;
         }
