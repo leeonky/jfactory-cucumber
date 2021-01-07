@@ -44,7 +44,7 @@ public class JData {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> List<T> prepare(String traitsSpec, List<Map<String, ?>> data) {
+    public <T> List<T> prepare(String traitsSpec, List<Map<String, ?>> data) {
         return (List<T>) data.stream().map(map -> toBuild(traitsSpec).properties(map).create()).collect(toList());
     }
 
@@ -73,32 +73,32 @@ public class JData {
 
     @那么("所有{string}数据应为：")
     @那么("所有{string}数据应为:")
-    public void allShould(String spec, String docString) {
-        assertData(queryAll(spec), docString);
+    public void allShould(String queryExpression, String dalExpression) {
+        assertData(queryAll(queryExpression), dalExpression);
     }
 
     @那么("{string}数据应为：")
     @那么("{string}数据应为:")
-    public void should(String specExpression, String docString) {
-        assertData(query(specExpression), docString);
+    public void should(String queryExpression, String dalExpression) {
+        assertData(query(queryExpression), dalExpression);
     }
 
-    private void assertData(Object query, String expression) {
+    private void assertData(Object specExpression, String dalExpression) {
         try {
-            AssertResult assertResult = dataAssert.assertData(query, expression);
+            AssertResult assertResult = dataAssert.assertData(specExpression, dalExpression);
             if (!assertResult.isPassed())
                 throw new AssertionError(assertResult.getMessage());
         } catch (DalException e) {
-            throw new RuntimeException(e.getMessage() + ":\n" + e.show(expression));
+            throw new RuntimeException(e.getMessage() + ":\n" + e.show(dalExpression));
         }
     }
 
-    public <T> T query(String specExpression) {
-        return new SpecExpression(specExpression).query();
+    public <T> T query(String queryExpression) {
+        return new SpecExpression(queryExpression).query();
     }
 
-    public <T> Collection<T> queryAll(String specExpression) {
-        return new SpecExpression(specExpression).queryAll();
+    public <T> Collection<T> queryAll(String queryExpression) {
+        return new SpecExpression(queryExpression).queryAll();
     }
 
     @假如("存在{int}个{string}")
@@ -135,9 +135,9 @@ public class JData {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, specExpression, defaultProperties(count));
     }
 
-    private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String specExpression,
+    private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String queryExpression,
                                                         List<Map<String, ?>> data) {
-        return data.stream().map(LinkedHashMap::new).peek(m -> m.put(reverseAssociationProperty, query(specExpression)))
+        return data.stream().map(LinkedHashMap::new).peek(m -> m.put(reverseAssociationProperty, query(queryExpression)))
                 .collect(toList());
     }
 

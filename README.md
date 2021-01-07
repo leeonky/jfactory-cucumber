@@ -12,3 +12,73 @@
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/leeonky/jfactory-cucumber.svg)](https://codeclimate.com/github/leeonky/jfactory-cucumber/maintainability)
 
 ---
+
+基于[JFactory](https://github.com/leeonky/jfactory)的测试工具库，为验收测试提供相对标准的数据准备和断言支持。
+
+测试代码可以通过注入JData后直接调用接口方法的方式准备测试数据，也可以通过内置的预定义Cucumber Step用数据表格来准备数据。
+
+无论以哪种形式准备数据，JData都会通过一些字符串形式的表达式表明某些特定的语意，假如如下的JFactory Spec已经注册：
+```java
+public class Products {
+    public static class 商品 extends Spec<Product> {
+        @Override
+        public void main() {
+            property("stocks").reverseAssociation("product");
+        }
+
+        @Trait
+        public 商品 红色的() {
+            property("color").value("red");
+            return this;
+        }
+    }
+}
+```
+那么：
+- traitsSpec 要准备数据的Trait和Spec，比如可以用如下代码构造一个商品集合
+```java
+jData.prepare("红色的 商品", new HashMap<String, String>() {{
+    put("name", "book");
+}});
+```
+- queryExpression 对象检索表达式，基本形式为"Spec.property[value]"，表示对应Spec所指类型的所有对象中，返回属性为value的那些对象，
+如下的表达式可以解释为检索出name为book的"商品"。
+```java
+List<Product> products = jData.queryAll("商品.name[book]");
+Product product = jData.query("商品.name[book]");
+```
+
+## API
+
+
+- 通过给定的属性集合准备对象集合
+```java
+<T> List<T> prepare(String traitsSpec, Table table)
+<T> List<T> prepare(String traitsSpec, Map<String, ?>... data)
+<T> List<T> prepare(String traitsSpec, List<Map<String, ?>> data)
+```
+
+- 准备一定数量的对象集合
+```java
+<T> List<T> prepare(int count, String traitsSpec)
+```
+
+- 查询某些符合条件的数据
+```java
+<T> T query(String specExpression)
+<T> Collection<T> queryAll(String specExpression)
+```
+
+- 为已存在对象通过给定的属性集合准备对象集合
+```java
+<T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data)
+```
+
+- 为已存在对象准备一定数量的对象集合
+```java
+<T> List<T> prepareAttachments(String specExpressionProperty, int count, String traitsSpec)
+```
+
+specExpressionProperty表示对象属性标识
+
+## Step
