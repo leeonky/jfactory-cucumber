@@ -34,51 +34,55 @@ public class Products {
     }
 }
 ```
-那么：
+通常会用到如下的几个表达式参数：
 - traitsSpec 要准备数据的Trait和Spec，比如可以用如下代码构造一个商品集合
+
 ```java
 jData.prepare("红色的 商品", new HashMap<String, String>() {{
     put("name", "book");
 }});
 ```
-- queryExpression 对象检索表达式，基本形式为"Spec.property[value]"，表示对应Spec所指类型的所有对象中，返回属性为value的那些对象，
+
+- queryExpression 对象检索表达式，基本形式为"Spec.property-chain[value]"，表示对应Spec所指类型的所有对象中，返回属性为value的那些对象，
 如下的表达式可以解释为检索出name为book的"商品"。
+
 ```java
 List<Product> products = jData.queryAll("商品.name[book]");
 Product product = jData.query("商品.name[book]");
 ```
 
+- beanProperty 对象属性标识，该标识由两部分组成，其形式可以理解为：queryExpression.property，前半部分为对象检索表达式，表示要针对哪个对象，
+property为属性名。该标识主要用于为已存在的对象关联子对象。
+
 ## API
 
 
-- 通过给定的属性集合准备对象集合
+- 给定部分属性值，准备对象
 ```java
 <T> List<T> prepare(String traitsSpec, Table table)
 <T> List<T> prepare(String traitsSpec, Map<String, ?>... data)
 <T> List<T> prepare(String traitsSpec, List<Map<String, ?>> data)
 ```
 
-- 准备一定数量的对象集合
+- 以默认属性值，准备一定数量的对象
 ```java
 <T> List<T> prepare(int count, String traitsSpec)
 ```
 
 - 查询某些符合条件的数据
 ```java
-<T> T query(String specExpression)
-<T> Collection<T> queryAll(String specExpression)
+<T> T query(String queryExpression)
+<T> Collection<T> queryAll(String queryExpression)
 ```
 
-- 为已存在对象通过给定的属性集合准备对象集合
+- 为已存在的对象准备子对象数据
 ```java
-<T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data)
+<T> List<T> prepareAttachments(String beanProperty, String traitsSpec, List<Map<String, ?>> data)
 ```
 
-- 为已存在对象准备一定数量的对象集合
+- 为已存在的对象准备默认子对象数据
 ```java
-<T> List<T> prepareAttachments(String specExpressionProperty, int count, String traitsSpec)
+<T> List<T> prepareAttachments(String beanProperty, int count, String traitsSpec)
 ```
-
-specExpressionProperty表示对象属性标识
 
 ## Step

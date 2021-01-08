@@ -94,11 +94,11 @@ public class JData {
     }
 
     public <T> T query(String queryExpression) {
-        return new SpecExpression(queryExpression).query();
+        return new QueryExpression(queryExpression).query();
     }
 
     public <T> Collection<T> queryAll(String queryExpression) {
-        return new SpecExpression(queryExpression).queryAll();
+        return new QueryExpression(queryExpression).queryAll();
     }
 
     @假如("存在{int}个{string}")
@@ -112,27 +112,27 @@ public class JData {
 
     @假如("存在{string}的{string}：")
     @假如("存在{string}的{string}:")
-    public <T> List<T> prepareAttachments(String specExpressionProperty, String traitsSpec, List<Map<String, ?>> data) {
-        return new BeanProperty(specExpressionProperty).attach(prepare(traitsSpec, data));
+    public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, List<Map<String, ?>> data) {
+        return new BeanProperty(beanProperty).attach(prepare(traitsSpec, data));
     }
 
     @假如("存在{string}的{int}个{string}")
-    public <T> List<T> prepareAttachments(String specExpressionProperty, int count, String traitsSpec) {
-        return prepareAttachments(specExpressionProperty, traitsSpec, defaultProperties(count));
+    public <T> List<T> prepareAttachments(String beanProperty, int count, String traitsSpec) {
+        return prepareAttachments(beanProperty, traitsSpec, defaultProperties(count));
     }
 
     @假如("存在如下{string}，并且其{string}为{string}：")
     @假如("存在如下{string}, 并且其{string}为{string}:")
-    public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String specExpression,
+    public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
                                           List<Map<String, ?>> data) {
-        return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, specExpression, data));
+        return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, queryExpression, data));
     }
 
     @假如("存在{int}个{string}，并且其{string}为{string}")
     @假如("存在{int}个{string}, 并且其{string}为{string}")
     public <T> List<T> prepareAttachments(int count, String traitsSpec, String reverseAssociationProperty,
-                                          String specExpression) {
-        return prepareAttachments(traitsSpec, reverseAssociationProperty, specExpression, defaultProperties(count));
+                                          String queryExpression) {
+        return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, defaultProperties(count));
     }
 
     private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String queryExpression,
@@ -149,10 +149,10 @@ public class JData {
         private Object bean;
         private Property property;
 
-        public BeanProperty(String specExpressionProperty) {
-            int index = specExpressionProperty.lastIndexOf('.');
-            bean = query(specExpressionProperty.substring(0, index));
-            property = BeanClass.create(bean.getClass()).getProperty(specExpressionProperty.substring(index + 1));
+        public BeanProperty(String beanProperty) {
+            int index = beanProperty.lastIndexOf('.');
+            bean = query(beanProperty.substring(0, index));
+            property = BeanClass.create(bean.getClass()).getProperty(beanProperty.substring(index + 1));
         }
 
         @SuppressWarnings("unchecked")
@@ -169,24 +169,24 @@ public class JData {
         }
     }
 
-    private class SpecExpression {
+    private class QueryExpression {
         private final String expression;
-        private final String traitsSpec;
+        private final String spec;
         private final Map<String, Object> properties = new LinkedHashMap<>();
 
-        public SpecExpression(String expression) {
+        public QueryExpression(String expression) {
             Matcher matcher = Pattern.compile("([^\\.]*)\\.(.*)\\[(.*)\\]").matcher(expression);
             this.expression = expression;
             if (matcher.find()) {
-                traitsSpec = matcher.group(1);
+                spec = matcher.group(1);
                 properties.put(matcher.group(2), matcher.group(3));
             } else
-                traitsSpec = expression;
+                spec = expression;
         }
 
         @SuppressWarnings("unchecked")
         public <T> Collection<T> queryAll() {
-            return (Collection<T>) jFactory.spec(traitsSpec).properties(properties).queryAll();
+            return (Collection<T>) jFactory.spec(spec).properties(properties).queryAll();
         }
 
         public <T> T query() {
