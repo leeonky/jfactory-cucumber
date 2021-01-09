@@ -71,14 +71,14 @@ public class JData {
         return dataTable.cell(0, 0).startsWith("'");
     }
 
-    @那么("所有{string}数据应为：")
-    @那么("所有{string}数据应为:")
+    @那么("所有{string}应为：")
+    @那么("所有{string}应为:")
     public void allShould(String queryExpression, String dalExpression) {
         assertData(queryAll(queryExpression), dalExpression);
     }
 
-    @那么("{string}数据应为：")
-    @那么("{string}数据应为:")
+    @那么("{string}应为：")
+    @那么("{string}应为:")
     public void should(String queryExpression, String dalExpression) {
         assertData(query(queryExpression), dalExpression);
     }

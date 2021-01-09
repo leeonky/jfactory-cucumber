@@ -6,12 +6,12 @@
     """
       name: book
     """
-    那么所有"商品.name[book]"数据应为：
+    那么所有"商品.name[book]"应为：
     """
       .size=1
       and [0].name='book'
     """
-    那么"商品.name[book]"数据应为：
+    那么"商品.name[book]"应为：
     """
       .name='book'
     """
@@ -21,12 +21,12 @@
     """
       name: book
     """
-    那么所有"商品.name[book]"数据应为:
+    那么所有"商品.name[book]"应为:
     """
       .size=1
       and [0].name='book'
     """
-    那么"商品.name[book]"数据应为:
+    那么"商品.name[book]"应为:
     """
       .name='book'
     """
