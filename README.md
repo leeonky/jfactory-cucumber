@@ -98,7 +98,7 @@ property为属性名。该标识主要用于为已存在的对象关联子对象
 ```
 
 ### Cucumber Step
-以上的API除检索数据接口外，都可以通过Cucumber Step的方式直接调用，加入有如下对象关系：
+以上的API除检索数据接口外，都可以通过Cucumber Step的方式直接调用，假如有如下对象关系：
 ```java
 //Entity
 public class Cart {
@@ -251,5 +251,23 @@ void allShould(String queryExpression, String dalExpression)
     """
       .size=1
       and [0].name='book'
+    """
+```
+
+一个完整的创建数据断言数据的例子（这不是一个有意义的测试，只是说明测试数据准备和断言）
+```gherkin
+  场景: 创建并检查数据
+    假如存在"商品"：
+    """
+      name: book
+    """
+    那么所有"商品"应为：
+    """
+      .size=1
+      and [0].name='book'
+    """
+    那么"商品.name[book]"应为：
+    """
+      .name='book'
     """
 ```
