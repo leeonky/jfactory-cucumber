@@ -1,7 +1,7 @@
 buildscript {
     ext {
         libVersions = [
-                cucumberJVM: '5.1.1',
+                cucumberJVM: '6.10.4',
                 jacksonXml : '2.9.0'
         ]
     }
