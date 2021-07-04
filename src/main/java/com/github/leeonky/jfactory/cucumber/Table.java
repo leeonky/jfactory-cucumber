@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toCollection;
@@ -20,8 +22,28 @@ public class Table extends ArrayList<Map<String, ?>> {
     private static final ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper();
     private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
 
+    @SafeVarargs
+    public static Table create(Map<String, ?>... maps) {
+        return create(asList(maps));
+    }
+
     public static Table create(List<? extends Map<String, ?>> maps) {
         return maps.stream().map(LinkedHashMap::new).collect(toCollection(Table::new));
+    }
+
+    public static Table create(List<String> headers, List<?>... rows) {
+        return create(headers, asList(rows));
+    }
+
+    public static Table create(List<String> headers, List<? extends List<?>> rows) {
+        return create(rows.stream().map(row -> {
+            Map<String, Object> rowMap = new LinkedHashMap<>();
+            for (int i = 0; i < headers.size(); i++) {
+                String header = headers.get(i);
+                rowMap.put(header, row.get(i));
+            }
+            return rowMap;
+        }).collect(Collectors.toList()));
     }
 
     @SuppressWarnings("unchecked")

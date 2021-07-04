@@ -26,8 +26,8 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JDataTest {
-    private List<Object> persisted = new ArrayList<>();
-    private JFactory jFactory = new JFactory(new DataRepository() {
+    private final List<Object> persisted = new ArrayList<>();
+    private final JFactory jFactory = new JFactory(new DataRepository() {
         @Override
         public <T> Collection<T> queryAll(Class<T> type) {
             return null;
@@ -42,7 +42,7 @@ class JDataTest {
             persisted.add(object);
         }
     });
-    private JData jData = new JData(jFactory);
+    private final JData jData = new JData(jFactory);
 
     @Nested
     class PrepareShould {
@@ -52,14 +52,14 @@ class JDataTest {
             jFactory.register(Products.商品.class);
 
             List<Object> list = jData.prepare("红色的 商品",
-                    Table.create(asList(
+                    Table.create(
                             new HashMap<String, Object>() {{
                                 put("name", "book");
                             }},
                             new HashMap<String, Object>() {{
                                 put("name", "bicycle");
                             }}
-                    )));
+                    ));
 
             assertThat(list).isEqualTo(persisted)
                     .extracting("name", "color").containsExactly(tuple("book", "red"), tuple("bicycle", "red"));
@@ -78,8 +78,8 @@ class JDataTest {
 
         @Nested
         class Attachment {
-            private JFactory jFactory = new JFactory();
-            private JData jData = new JData(jFactory);
+            private final JFactory jFactory = new JFactory();
+            private final JData jData = new JData(jFactory);
 
             @Test
             void support_create_sub_children_list() {
@@ -239,8 +239,8 @@ class JDataTest {
 
     @Nested
     class AssertionShould {
-        private JFactory jFactory = new JFactory();
-        private JData jData = new JData(jFactory);
+        private final JFactory jFactory = new JFactory();
+        private final JData jData = new JData(jFactory);
 
         @Nested
         class AssertAll {

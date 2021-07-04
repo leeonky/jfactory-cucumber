@@ -1,10 +1,13 @@
 package com.github.leeonky.jfactory.cucumber;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
@@ -91,5 +94,22 @@ class TableTest {
                     entry("customers[4](Available Customer)!.name", "Tom")
             );
         }
+    }
+
+    @Test
+    @SneakyThrows
+    void support_create_table_from_list_list() {
+        Table table = Table.create(asList("col1", "col2"), asList(1, "str"), asList("2", "str2"));
+
+        assertThat(table.flatSub()).containsExactly(
+                new HashMap<String, Object>() {{
+                    put("col1", 1);
+                    put("col2", "str");
+                }},
+                new HashMap<String, Object>() {{
+                    put("col1", "2");
+                    put("col2", "str2");
+                }}
+        );
     }
 }

@@ -4,7 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.picocontainer.PicoFactory;
 
 public class CustomPicoFactory implements ObjectFactory {
-    private PicoFactory delegate = new PicoFactory();
+    private final PicoFactory delegate = new PicoFactory();
 
     @Override
     public void start() {
@@ -22,6 +22,7 @@ public class CustomPicoFactory implements ObjectFactory {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> glueClass) {
         if (glueClass.equals(JData.class))
             return (T) new JData(new EntityFactory());
