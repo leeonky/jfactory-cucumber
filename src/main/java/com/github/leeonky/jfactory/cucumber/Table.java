@@ -16,11 +16,11 @@ import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 
-public class Table extends ArrayList<Map<String, Object>> {
+public class Table extends ArrayList<Map<String, ?>> {
     private static final ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper();
     private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
 
-    public static Table create(List<Map<String, Object>> maps) {
+    public static Table create(List<? extends Map<String, ?>> maps) {
         return maps.stream().map(LinkedHashMap::new).collect(toCollection(Table::new));
     }
 
@@ -38,39 +38,40 @@ public class Table extends ArrayList<Map<String, Object>> {
         }
     }
 
-    public Map[] flatSub() {
+    @SuppressWarnings("unchecked")
+    public Map<String, Object>[] flatSub() {
         return stream().map(this::flat).toArray(Map[]::new);
     }
 
-    private Map<String, Object> merge(Map<String, Object> m1, Map<String, Object> m2) {
-        return new LinkedHashMap<String, Object>() {{
+    private <T> Map<String, T> merge(Map<String, T> m1, Map<String, T> m2) {
+        return new LinkedHashMap<String, T>() {{
             putAll(m1);
             putAll(m2);
         }};
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> flatSub(String key, Object value) {
+    private Map<String, ?> flatSub(String key, Object value) {
         if (value instanceof Map)
-            return combineKey(flat((Map<String, Object>) value), key, ".");
+            return combineKey(flat((Map<String, ?>) value), key, ".");
         else if (value instanceof List)
-            return combineKey(flat((List<Object>) value), key, "");
+            return combineKey(flat((List<?>) value), key, "");
         else
             return singletonMap(key, value);
     }
 
-    private Map<String, Object> combineKey(Map<String, Object> sub, String key, String dot) {
+    private Map<String, ?> combineKey(Map<String, ?> sub, String key, String dot) {
         Postfix postfix = new Postfix((String) sub.remove("_"));
         return sub.entrySet().stream().collect(toMap(e -> key + postfix.apply() + dot + e.getKey(),
                 Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
     }
 
-    private Map<String, Object> flat(Map<String, Object> value) {
+    private Map<String, ?> flat(Map<String, ?> value) {
         return value.entrySet().stream().map(m -> flatSub(m.getKey(), m.getValue()))
                 .reduce(new LinkedHashMap<>(), this::merge);
     }
 
-    private Map<String, Object> flat(List<Object> list) {
+    private Map<String, ?> flat(List<?> list) {
         Iterator<Integer> index = Stream.iterate(0, i -> i + 1).iterator();
         return list.stream().map(e -> flatSub("[" + index.next() + "]", e))
                 .reduce(new LinkedHashMap<>(), this::merge);

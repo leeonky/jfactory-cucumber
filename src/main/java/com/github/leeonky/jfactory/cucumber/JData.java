@@ -33,7 +33,6 @@ public class JData {
 
     @假如("存在{string}：")
     @假如("存在{string}:")
-    @SuppressWarnings("unchecked")
     public <T> List<T> prepare(String traitsSpec, Table table) {
         return prepare(traitsSpec, table.flatSub());
     }
@@ -44,7 +43,7 @@ public class JData {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> prepare(String traitsSpec, List<Map<String, ?>> data) {
+    public <T> List<T> prepare(String traitsSpec, List<? extends Map<String, ?>> data) {
         return (List<T>) data.stream().map(map -> toBuild(traitsSpec).properties(map).create()).collect(toList());
     }
 
@@ -54,11 +53,10 @@ public class JData {
     }
 
     @DataTableType
-    @SuppressWarnings("unchecked")
     public Table transform(DataTable dataTable) {
         if (needTranspose(dataTable))
             dataTable = DataTable.create(removeTransposeSymbol(dataTable));
-        return create((List) dataTable.asMaps());
+        return create(dataTable.asMaps());
     }
 
     private List<List<String>> removeTransposeSymbol(DataTable dataTable) {
@@ -112,7 +110,7 @@ public class JData {
 
     @假如("存在{string}的{string}：")
     @假如("存在{string}的{string}:")
-    public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, List<Map<String, ?>> data) {
+    public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, List<? extends Map<String, ?>> data) {
         return new BeanProperty(beanProperty).attach(prepare(traitsSpec, data));
     }
 
@@ -124,7 +122,7 @@ public class JData {
     @假如("存在如下{string}，并且其{string}为{string}：")
     @假如("存在如下{string}, 并且其{string}为{string}:")
     public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
-                                          List<Map<String, ?>> data) {
+                                          List<? extends Map<String, ?>> data) {
         return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, queryExpression, data));
     }
 
@@ -136,7 +134,7 @@ public class JData {
     }
 
     private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String queryExpression,
-                                                        List<Map<String, ?>> data) {
+                                                        List<? extends Map<String, ?>> data) {
         return data.stream().map(LinkedHashMap::new).peek(m -> m.put(reverseAssociationProperty, query(queryExpression)))
                 .collect(toList());
     }
@@ -146,7 +144,7 @@ public class JData {
     }
 
     private class BeanProperty {
-        private Object bean;
+        private final Object bean;
         private Property property;
 
         public BeanProperty(String beanProperty) {
@@ -158,7 +156,7 @@ public class JData {
         @SuppressWarnings("unchecked")
         private <T> List<T> attach(List<T> attachments) {
             if (Collection.class.isAssignableFrom(property.getReaderType().getType()))
-                ((Collection) property.getValue(bean)).addAll(attachments);
+                ((Collection<T>) property.getValue(bean)).addAll(attachments);
             else {
                 if (attachments.size() != 1)
                     throw new IllegalStateException("More than one candidates");
@@ -175,7 +173,7 @@ public class JData {
         private final Map<String, Object> properties = new LinkedHashMap<>();
 
         public QueryExpression(String expression) {
-            Matcher matcher = Pattern.compile("([^\\.]*)\\.(.*)\\[(.*)\\]").matcher(expression);
+            Matcher matcher = Pattern.compile("([^.]*)\\.(.*)\\[(.*)]").matcher(expression);
             this.expression = expression;
             if (matcher.find()) {
                 spec = matcher.group(1);
