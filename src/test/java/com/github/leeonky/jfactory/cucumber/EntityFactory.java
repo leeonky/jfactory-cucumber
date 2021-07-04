@@ -13,7 +13,7 @@ import javax.persistence.Persistence;
 
 public class EntityFactory extends JFactory {
     public static final EntityManager entityManager = Persistence.createEntityManagerFactory("jfactory-repo").createEntityManager();
-    private static final JPADataRepository jpaDataRepository = new JPADataRepository(entityManager);
+    public static final JPADataRepository jpaDataRepository = new JPADataRepository(entityManager);
 
     public EntityFactory() {
         super(jpaDataRepository);

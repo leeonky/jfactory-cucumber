@@ -38,7 +38,7 @@ task sourcesJar(type: Jar) {
 }
 
 group = 'com.github.leeonky'
-version = '0.1.0' + System.env.VERSION_SCOPE
+version = '0.1.1' + System.env.VERSION_SCOPE
 sourceCompatibility = 1.8
 
 jacocoTestReport {
@@ -61,7 +61,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:${libVersions.jacksonXml}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${libVersions.jacksonXml}"
 
-    testImplementation 'com.github.leeonky:jfactory-repo-jpa:0.1.0'
+    testImplementation 'com.github.leeonky:jfactory-repo-jpa:0.1.2'
     testImplementation "io.cucumber:cucumber-junit:5.1.1"
     testImplementation "io.cucumber:cucumber-picocontainer:5.1.1"
     testImplementation 'org.hibernate:hibernate-core:5.4.0.Final'

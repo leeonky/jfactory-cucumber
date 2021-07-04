@@ -1,6 +1,6 @@
 # JFactory-Cucumber
 
-[![travis-ci](https://travis-ci.org/leeonky/jfactory-cucumber.svg?branch=master)](https://travis-ci.org/leeonky/jfactory-cucumber)
+[![travis-ci](https://travis-ci.com/leeonky/jfactory-cucumber.svg?branch=master)](https://travis-ci.com/github/leeonky/jfactory-cucumber)
 [![coveralls](https://img.shields.io/coveralls/github/leeonky/jfactory-cucumber/master.svg)](https://coveralls.io/github/leeonky/jfactory-cucumber)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fleeonky%2Fjfactory-cucumber%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/leeonky/jfactory-cucumber/master)
 [![Lost commit](https://img.shields.io/github/last-commit/leeonky/jfactory-cucumber.svg)](https://github.com/leeonky/jfactory-cucumber)

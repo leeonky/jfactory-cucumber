@@ -1,7 +1,6 @@
 package com.github.leeonky.jfactory.cucumber;
 
 import io.cucumber.java.Before;
-import io.cucumber.java.BeforeStep;
 
 import javax.persistence.EntityTransaction;
 
@@ -17,10 +16,6 @@ public class ClearData {
         EntityFactory.entityManager.createQuery("delete from Product").executeUpdate();
         EntityFactory.entityManager.createQuery("delete from Cart").executeUpdate();
         transaction.commit();
-    }
-
-    @BeforeStep
-    public void cleanEntityManagerCache() {
-        EntityFactory.entityManager.clear();
+        EntityFactory.jpaDataRepository.clear();
     }
 }
