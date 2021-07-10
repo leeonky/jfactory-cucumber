@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -17,6 +18,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.IntStream.range;
 
 public class Table extends ArrayList<Map<String, ?>> {
     private static final ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper();
@@ -36,14 +38,9 @@ public class Table extends ArrayList<Map<String, ?>> {
     }
 
     public static Table create(List<String> headers, List<? extends List<?>> rows) {
-        return create(rows.stream().map(row -> {
-            Map<String, Object> rowMap = new LinkedHashMap<>();
-            for (int i = 0; i < headers.size(); i++) {
-                String header = headers.get(i);
-                rowMap.put(header, row.get(i));
-            }
-            return rowMap;
-        }).collect(Collectors.toList()));
+        return create(rows.stream().map(row ->
+                range(0, headers.size()).boxed().collect(toMap(headers::get, row::get)))
+                .collect(Collectors.toList()));
     }
 
     @SuppressWarnings("unchecked")

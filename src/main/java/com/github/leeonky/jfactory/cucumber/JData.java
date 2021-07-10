@@ -27,6 +27,10 @@ public class JData {
     private final JFactory jFactory;
     private final DataAssert dataAssert = new DataAssert();
 
+    public DataAssert getDataAssert() {
+        return dataAssert;
+    }
+
     public JData(JFactory jFactory) {
         this.jFactory = jFactory;
     }
