@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -39,7 +38,7 @@ public class Table extends ArrayList<Map<String, ?>> {
 
     public static Table create(List<String> headers, List<? extends List<?>> rows) {
         return create(rows.stream().map(row ->
-                range(0, headers.size()).boxed().collect(toMap(headers::get, row::get)))
+                range(0, headers.size()).boxed().collect(toMap(headers::get, i -> row.get(i))))
                 .collect(Collectors.toList()));
     }
 
