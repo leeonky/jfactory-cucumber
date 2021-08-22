@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @Table(name = "T_ORDER")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

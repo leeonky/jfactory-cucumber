@@ -17,4 +17,23 @@ public class Products {
             return this;
         }
     }
+
+    public static class ProductFactory extends Spec<Product> {
+
+        @Override
+        public void main() {
+            property("stocks").reverseAssociation("product");
+        }
+
+        @Trait("Red")
+        public ProductFactory red() {
+            property("color").value("red");
+            return this;
+        }
+
+        @Override
+        protected String getName() {
+            return "Product";
+        }
+    }
 }

@@ -23,6 +23,11 @@ public class EntityFactory extends JFactory {
         register(ProductStocks.库存.class);
         register(Orders.订单.class);
 
+        register(Products.ProductFactory.class);
+        register(Carts.CartProduct.class);
+        register(ProductStocks.Inventory.class);
+        register(Orders.OrderFactory.class);
+
         ignoreDefaultValue(propertyWriter -> propertyWriter.getAnnotation(Id.class) != null);
     }
 }

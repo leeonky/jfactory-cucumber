@@ -10,6 +10,8 @@ import com.github.leeonky.util.Property;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.DocStringType;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.zh_cn.假如;
 import io.cucumber.java.zh_cn.那么;
 
@@ -37,6 +39,7 @@ public class JData {
 
     @假如("存在{string}：")
     @假如("存在{string}:")
+    @Given("Exists data {string}:")
     public <T> List<T> prepare(String traitsSpec, Table table) {
         return prepare(traitsSpec, table.flatSub());
     }
@@ -75,12 +78,14 @@ public class JData {
 
     @那么("所有{string}应为：")
     @那么("所有{string}应为:")
+    @Then("All data {string} should be:")
     public void allShould(String queryExpression, String dalExpression) {
         assertData(queryAll(queryExpression), dalExpression);
     }
 
     @那么("{string}应为：")
     @那么("{string}应为:")
+    @Then("Data {string} should be:")
     public void should(String queryExpression, String dalExpression) {
         assertData(query(queryExpression), dalExpression);
     }
@@ -104,6 +109,7 @@ public class JData {
     }
 
     @假如("存在{int}个{string}")
+    @Given("Exists {int} data {string}")
     public <T> List<T> prepare(int count, String traitsSpec) {
         return prepare(traitsSpec, defaultProperties(count));
     }
@@ -114,17 +120,20 @@ public class JData {
 
     @假如("存在{string}的{string}：")
     @假如("存在{string}的{string}:")
+    @Given("Exists {string} as data {string}:")
     public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, List<? extends Map<String, ?>> data) {
         return new BeanProperty(beanProperty).attach(prepare(traitsSpec, data));
     }
 
     @假如("存在{string}的{int}个{string}")
+    @Given("Exists {string} as {int} data {string}")
     public <T> List<T> prepareAttachments(String beanProperty, int count, String traitsSpec) {
         return prepareAttachments(beanProperty, traitsSpec, defaultProperties(count));
     }
 
     @假如("存在如下{string}，并且其{string}为{string}：")
     @假如("存在如下{string}, 并且其{string}为{string}:")
+    @Given("Exists following data {string}, and its {string} is {string}:")
     public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
                                           List<? extends Map<String, ?>> data) {
         return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, queryExpression, data));
@@ -132,6 +141,7 @@ public class JData {
 
     @假如("存在{int}个{string}，并且其{string}为{string}")
     @假如("存在{int}个{string}, 并且其{string}为{string}")
+    @Given("Exists {int} data {string}, and its {string} is {string}")
     public <T> List<T> prepareAttachments(int count, String traitsSpec, String reverseAssociationProperty,
                                           String queryExpression) {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, defaultProperties(count));

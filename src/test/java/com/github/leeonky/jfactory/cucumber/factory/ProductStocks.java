@@ -6,4 +6,7 @@ import com.github.leeonky.jfactory.cucumber.entity.ProductStock;
 public class ProductStocks {
     public static class 库存 extends Spec<ProductStock> {
     }
+
+    public static class Inventory extends Spec<ProductStock> {
+    }
 }
