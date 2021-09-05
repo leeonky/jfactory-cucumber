@@ -295,6 +295,7 @@ void allShould(String queryExpression,String dalExpression)
 
 更多文档请看下面
 
+* [请先阅读 JFactory 的文档](https://github.com/leeonky/jfactory/blob/master/README.md)
 * [准备默认数据](doc/PrepareDefault.md)
 * [准备数据 - 表格方式](doc/PrepareTable.md)
 * [准备数据 - Json 方式](doc/PrepareJson.md)
