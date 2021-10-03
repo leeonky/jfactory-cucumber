@@ -162,5 +162,328 @@ product_stocks
 值得注意的是，`products[0](商品).name` 这个列名其实是一个表达式。其含义为，将 `products` 这个列表属性的第一个元素对象用 `商品` 这个工厂来创建，并将其属性 `name` 设置为列值，即 `book`
 。像这样的列名表达式都是通过 [JFactory](https://github.com/leeonky/jfactory/blob/master/README.md) 来实现的。
 
-## 准备数据使用之前创建的对象
+## 为已存在的数据添加一对一的关联数据
 
+假如有下面的实体类，并且工厂类已经注册：
+
+```java
+
+@Entity
+@Getter
+@Setter
+@Table(name = "orders")
+public class Order {
+
+    @Id
+    private long id;
+    private String customer;
+
+    @OneToOne
+    private Product product;
+}
+
+@Entity
+@Getter
+@Setter
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private long id;
+    private String name;
+
+}
+
+public class Orders {
+    public static class 订单 extends Spec<Order> {
+    }
+}
+
+public class Products {
+    public static class 商品 extends Spec<Product> {
+    }
+}
+```
+
+并且已经通过下面的 Cucumber Step 创建了订单对象：
+
+```gherkin
+存在"订单"：
+| customer |
+| Tom      |
+```
+
+当用如下的 Cucumber Step 来创建对象时：
+
+```gherkin
+存在"订单.customer[Tom].product"的"商品"：
+| name    |
+| bicycle |
+```
+
+或者，当用如下的 Api 来创建对象时：
+
+```java
+jData.prepare("订单.customer[Tom].product","商品",new HashMap<String, Object>(){{
+        put("name","bicycle");
+        }});
+```
+
+那么会将如下数据创建到数据库中：
+
+```gherkin
+orders
+| id | customer |
+| 1  | Tom      |
+products
+| id      | name    | order_id |
+| 1       | bicycle | 1        |
+```
+
+## 为已存在的数据添加多对多的关联数据
+
+假如有下面的实体类，并且工厂类已经注册：
+
+```java
+
+@Entity
+@Getter
+@Setter
+@Table(name = "carts")
+public class Cart {
+
+    @Id
+    private long id;
+    private String customer;
+
+    @OneToMany
+    private List<Product> products = new ArrayList<>();
+}
+
+@Entity
+@Getter
+@Setter
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private long id;
+    private String name;
+
+}
+```
+
+并且已经通过下面的 Cucumber Step 创建了购物车对象。请注意，这里除了创建购物车数据外，也同时创建了一条name为book的商品数据。
+
+```gherkin
+存在"购物车"：
+| customer | products[0](商品).name |
+| Tom      | book                 |
+```
+
+当用如下的 Cucumber Step 来创建对象时：
+
+```gherkin
+存在"购物车.customer[Tom].products"的"商品"：
+| name    |
+| bicycle |
+```
+
+那么会将如下数据创建到数据库中：
+
+```gherkin
+carts
+| id | customer |
+| 1  | Tom      |
+products
+| id      | name    | cart_id |
+| 1       | book    | 1       |
+| 2       | bicycle | 1       |
+```
+
+## 为已存在的数据添加默认关联数据
+
+假如有下面的实体类，并且工厂类已经注册：
+
+```java
+
+@Entity
+@Getter
+@Setter
+@Table(name = "carts")
+public class Cart {
+
+    @Id
+    private long id;
+    private String customer;
+
+    @OneToMany
+    private List<Product> products = new ArrayList<>();
+}
+
+@Entity
+@Getter
+@Setter
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private long id;
+    private String name;
+
+}
+```
+
+并且已经通过下面的 Cucumber Step 创建了购物车对象。请注意，这里除了创建购物车数据外，也同时创建了一条name为book的商品数据。
+
+```gherkin
+存在"购物车"：
+| customer | products[0](商品).name |
+| Tom      | book                 |
+```
+
+当用如下的 Cucumber Step 来创建对象时：
+
+```gherkin
+存在"购物车.customer[Tom].products"的1个"商品"
+```
+
+那么会将如下数据创建到数据库中：
+
+```gherkin
+carts
+| id | customer |
+| 1  | Tom      |
+products
+| id | name   | cart_id |
+| 1  | book   | 1       |
+| 2  | name#1 | 1       |
+```
+
+## 为已存在的数据添加反向一对多的关联数据
+
+假如有下面的实体类，并且工厂类已经注册：
+
+```java
+
+@Entity
+@Getter
+@Setter
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private long id;
+    private String name;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductStock> stocks = new ArrayList<>();
+
+}
+
+@Entity
+@Getter
+@Setter
+@Table(name = "product_stocks")
+public class ProductStock {
+
+    @Id
+    private long id;
+    private String size;
+    private int count;
+
+    @ManyToOne
+    private Product product;
+
+}
+```
+
+并且已经通过下面的 Cucumber Step 创建了商品对象。
+
+```gherkin
+存在"商品"：
+| name |
+| book |
+```
+
+当用如下的 Cucumber Step 来创建对象时：
+
+```gherkin
+存在如下"库存"，并且其"product"为"商品.name[book]"：
+| size | count |
+| A3   | 10    |
+```
+
+那么会将如下数据创建到数据库中：
+
+```gherkin
+products
+| id   | name |
+| 1    | book |
+product_stocks
+| id   | size  | count | product_id |
+| 1    | A3    | 10    | 1          |
+```
+
+## 为已存在的数据添加反向一对多的默认关联数据
+
+假如有下面的实体类，并且工厂类已经注册：
+
+```java
+
+@Entity
+@Getter
+@Setter
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private long id;
+    private String name;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductStock> stocks = new ArrayList<>();
+
+}
+
+@Entity
+@Getter
+@Setter
+@Table(name = "product_stocks")
+public class ProductStock {
+
+    @Id
+    private long id;
+    private String size;
+    private int count;
+
+    @ManyToOne
+    private Product product;
+
+}
+```
+
+并且已经通过下面的 Cucumber Step 创建了商品对象。
+
+```gherkin
+存在"商品"：
+| name |
+| book |
+```
+
+当用如下的 Cucumber Step 来创建对象时：
+
+```gherkin
+存在1个"库存"，并且其"product"为"商品.name[book]"
+```
+
+那么会将如下数据创建到数据库中：
+
+```gherkin
+products
+| id   | name |
+| 1    | book |
+product_stocks
+| id | size   | count | product_id |
+| 1  | size#1 | 1     | 1          |
+```
