@@ -11,6 +11,7 @@
 @Entity
 @Getter
 @Setter
+@Table(name = "products")
 public class Product {
     @Id
     private long id;
@@ -43,6 +44,7 @@ jData.prepare("商品",new HashMap<String, Object>(){{
 那么都将如下数据创建到数据库中：
 
 ```gherkin
+products
 | id | name | color   |
 | 1  | book | color#1 |
 ```
@@ -66,6 +68,7 @@ Cucumber 支持 [转置表格](https://javadoc.io/doc/io.cucumber/cucumber-java/
 那么会将如下数据创建到数据库中：
 
 ```gherkin
+products
 | id | name    | color |
 | 1  | book    | red   |
 | 2  | bicycle | white |
