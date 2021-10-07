@@ -160,18 +160,18 @@ public class ProductStocks {
 ```gherkin
 存在"购物车"：
 """
-{
-  "customer": "Tom",
-  "products": [{
-    "_": "(商品)",
-    "name": "book",
-    "stocks": [{
-      "_": "(库存)",
-      "size": "A4",
-      "count": "100"
-    }]
-   }]
-}
+    {
+      "customer": "Tom",
+      "products": [{
+        "_": "(商品)",
+        "name": "book",
+        "stocks": [{
+          "_": "(库存)",
+          "size": "A4",
+          "count": "100"
+        }]
+       }]
+    }
 """
 ```
 
