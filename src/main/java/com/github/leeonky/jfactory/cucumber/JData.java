@@ -1,8 +1,8 @@
 package com.github.leeonky.jfactory.cucumber;
 
-import com.github.leeonky.dal.AssertResult;
-import com.github.leeonky.dal.DalException;
-import com.github.leeonky.dal.DataAssert;
+import com.github.leeonky.dal.DAL;
+import com.github.leeonky.dal.ast.AssertionFailure;
+import com.github.leeonky.dal.runtime.DalException;
 import com.github.leeonky.jfactory.Builder;
 import com.github.leeonky.jfactory.JFactory;
 import com.github.leeonky.util.BeanClass;
@@ -27,10 +27,10 @@ import static java.util.stream.IntStream.range;
 
 public class JData {
     private final JFactory jFactory;
-    private final DataAssert dataAssert = new DataAssert();
+    private final DAL dal = new DAL();
 
-    public DataAssert getDataAssert() {
-        return dataAssert;
+    public DAL getDal() {
+        return dal;
     }
 
     public JData(JFactory jFactory) {
@@ -92,9 +92,9 @@ public class JData {
 
     private void assertData(Object specExpression, String dalExpression) {
         try {
-            AssertResult assertResult = dataAssert.assertData(specExpression, dalExpression);
-            if (!assertResult.isPassed())
-                throw new AssertionError(assertResult.getMessage());
+            dal.evaluateAll(specExpression, dalExpression);
+        } catch (AssertionFailure assertionFailure) {
+            throw new AssertionError(assertionFailure.getMessage() + ":\n" + assertionFailure.show(dalExpression));
         } catch (DalException e) {
             throw new RuntimeException(e.getMessage() + ":\n" + e.show(dalExpression));
         }

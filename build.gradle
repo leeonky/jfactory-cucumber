@@ -53,8 +53,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.github.leeonky:bean-util:0.2.9'
     compile 'com.github.leeonky:jfactory:0.2.1'
-    compile 'com.github.leeonky:DAL-java:0.0.16'
+    compile 'com.github.leeonky:DAL-java:0.1.1'
 
     implementation "io.cucumber:cucumber-java:${libVersions.cucumberJVM}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${libVersions.jacksonXml}"
