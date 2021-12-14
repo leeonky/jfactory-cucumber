@@ -1,6 +1,7 @@
 package com.github.leeonky.jfactory.cucumber;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.leeonky.util.BeanClass;
@@ -20,8 +21,15 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.IntStream.range;
 
 public class Table extends ArrayList<Map<String, ?>> {
-    private static final ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper();
-    private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper() {{
+        configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+        configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true);
+    }};
+    private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory()) {{
+        configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
+    }};
 
     @SafeVarargs
     public static Table create(Map<String, ?>... maps) {

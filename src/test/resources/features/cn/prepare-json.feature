@@ -58,3 +58,19 @@
       and .products[0].stocks[0].size='A4'
       and .products[0].stocks[0].count=100
     """
+
+  场景: 准备商品-relaxed JSON数组格式
+    假如存在"商品"：
+    """
+      [{
+        name: 'book',
+      },{
+        name: 'bicycle'
+      }]
+    """
+    那么所有"商品"应为：
+    """
+      .size=2
+      and [0].name='book'
+      and [1].name='bicycle'
+    """
