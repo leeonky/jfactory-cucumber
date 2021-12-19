@@ -121,6 +121,14 @@ public class JData {
     @假如("存在{string}的{string}：")
     @假如("存在{string}的{string}:")
     @Given("Exists {string} as data {string}:")
+    public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, Table table) {
+        return prepareAttachments(beanProperty, traitsSpec, table.flatSub());
+    }
+
+    public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, Map<String, ?>... data) {
+        return prepareAttachments(beanProperty, traitsSpec, asList(data));
+    }
+
     public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, List<? extends Map<String, ?>> data) {
         return new BeanProperty(beanProperty).attach(prepare(traitsSpec, data));
     }
@@ -134,6 +142,16 @@ public class JData {
     @假如("存在如下{string}，并且其{string}为{string}：")
     @假如("存在如下{string}, 并且其{string}为{string}:")
     @Given("Exists following data {string}, and its {string} is {string}:")
+    public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
+                                          Table table) {
+        return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, table.flatSub());
+    }
+
+    public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
+                                          Map<String, ?>... data) {
+        return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, asList(data));
+    }
+
     public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
                                           List<? extends Map<String, ?>> data) {
         return prepare(traitsSpec, addAssociationProperty(reverseAssociationProperty, queryExpression, data));
