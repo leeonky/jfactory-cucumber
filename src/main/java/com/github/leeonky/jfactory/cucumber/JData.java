@@ -27,7 +27,7 @@ import static java.util.stream.IntStream.range;
 
 public class JData {
     private final JFactory jFactory;
-    private final DAL dal = new DAL();
+    private final DAL dal = DAL.getInstance();
 
     public DAL getDal() {
         return dal;
@@ -125,6 +125,7 @@ public class JData {
         return prepareAttachments(beanProperty, traitsSpec, table.flatSub());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, Map<String, ?>... data) {
         return prepareAttachments(beanProperty, traitsSpec, asList(data));
     }
@@ -147,6 +148,7 @@ public class JData {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, table.flatSub());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
                                           Map<String, ?>... data) {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, asList(data));
