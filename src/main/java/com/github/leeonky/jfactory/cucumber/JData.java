@@ -1,8 +1,5 @@
 package com.github.leeonky.jfactory.cucumber;
 
-import com.github.leeonky.dal.DAL;
-import com.github.leeonky.dal.ast.AssertionFailure;
-import com.github.leeonky.dal.runtime.DalException;
 import com.github.leeonky.jfactory.Builder;
 import com.github.leeonky.jfactory.JFactory;
 import com.github.leeonky.util.BeanClass;
@@ -20,6 +17,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.github.leeonky.dal.Assertions.expect;
 import static com.github.leeonky.jfactory.cucumber.Table.create;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -27,11 +25,11 @@ import static java.util.stream.IntStream.range;
 
 public class JData {
     private final JFactory jFactory;
-    private final DAL dal = DAL.getInstance();
-
-    public DAL getDal() {
-        return dal;
-    }
+//    private final DAL dal = DAL.getInstance();
+//
+//    public DAL getDal() {
+//        return dal;
+//    }
 
     public JData(JFactory jFactory) {
         this.jFactory = jFactory;
@@ -90,14 +88,8 @@ public class JData {
         assertData(query(queryExpression), dalExpression);
     }
 
-    private void assertData(Object specExpression, String dalExpression) {
-        try {
-            dal.evaluateAll(specExpression, dalExpression);
-        } catch (AssertionFailure assertionFailure) {
-            throw new AssertionError(assertionFailure.getMessage() + ":\n" + assertionFailure.show(dalExpression));
-        } catch (DalException e) {
-            throw new RuntimeException(e.getMessage() + ":\n" + e.show(dalExpression));
-        }
+    private void assertData(Object instance, String dalExpression) {
+        expect(instance).should(dalExpression);
     }
 
     public <T> T query(String queryExpression) {
