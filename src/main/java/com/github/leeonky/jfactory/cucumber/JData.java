@@ -77,19 +77,19 @@ public class JData {
     @那么("所有{string}应为：")
     @那么("所有{string}应为:")
     @Then("All data {string} should be:")
-    public void allShould(String queryExpression, String dalExpression) {
-        assertData(queryAll(queryExpression), dalExpression);
+    public <T> T allShould(String queryExpression, String dalExpression) {
+        return assertData(queryAll(queryExpression), dalExpression);
     }
 
     @那么("{string}应为：")
     @那么("{string}应为:")
     @Then("Data {string} should be:")
-    public void should(String queryExpression, String dalExpression) {
-        assertData(query(queryExpression), dalExpression);
+    public <T> T should(String queryExpression, String dalExpression) {
+        return assertData(query(queryExpression), dalExpression);
     }
 
-    private void assertData(Object instance, String dalExpression) {
-        expect(instance).should(dalExpression);
+    private <T> T assertData(Object instance, String dalExpression) {
+        return expect(instance).should(dalExpression);
     }
 
     public <T> T query(String queryExpression) {
