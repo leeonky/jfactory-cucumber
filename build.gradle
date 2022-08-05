@@ -11,6 +11,10 @@ buildscript {
     dependencies {
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.5.2'
     }
+    ext {
+        repoName = "git config --get remote.origin.url".execute().getText()
+        projectName = "basename -s .git ${repoName}".execute().getText().trim()
+    }
 }
 
 plugins {
@@ -38,7 +42,7 @@ task sourcesJar(type: Jar) {
 }
 
 group = 'com.github.leeonky'
-version = '0.1.19' + System.env.VERSION_SCOPE
+version = '0.1.20' + System.env.VERSION_SCOPE
 sourceCompatibility = 1.8
 
 jacocoTestReport {
@@ -53,8 +57,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.leeonky:jfactory:0.3.12'
-    compile 'com.github.leeonky:DAL-java:0.2.7'
+    compile 'com.github.leeonky:jfactory:0.3.15'
+    compile 'com.github.leeonky:DAL-java:0.3.3'
 
     implementation "io.cucumber:cucumber-java:${libVersions.cucumberJVM}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${libVersions.jacksonXml}"
@@ -89,13 +93,14 @@ pitest {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            artifactId = projectName
             from(components.java)
             artifact sourcesJar
             artifact javadocJar
             pom {
-                name = project.name
-                description = project.name
-                url = 'https://github.com/leeonky/' + project.name
+                name = projectName
+                description = projectName
+                url = 'https://github.com/leeonky/' + projectName
 
                 licenses {
                     license {
@@ -113,9 +118,9 @@ publishing {
                 }
 
                 scm {
-                    connection = 'scm:git:https://github.com/leeonky/' + project.name + '.git'
-                    developerConnection = 'scm:git:git@github.com:leeonky' + project.name + '.git'
-                    url = 'https://github.com/leeonky/' + project.name + '.git'
+                    connection = 'scm:git:https://github.com/leeonky/' + projectName + '.git'
+                    developerConnection = 'scm:git:git@github.com:leeonky' + projectName + '.git'
+                    url = 'https://github.com/leeonky/' + projectName + '.git'
                 }
             }
         }
