@@ -42,7 +42,7 @@ task sourcesJar(type: Jar) {
 }
 
 group = 'com.github.leeonky'
-version = '0.1.20' + System.env.VERSION_SCOPE
+version = '0.1.21' + System.env.VERSION_SCOPE
 sourceCompatibility = 1.8
 
 jacocoTestReport {
@@ -57,8 +57,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.leeonky:jfactory:0.3.15'
-    compile 'com.github.leeonky:DAL-java:0.3.3'
+    compile 'com.github.leeonky:jfactory:0.3.18'
+    compile 'com.github.leeonky:DAL-java:0.3.8'
 
     implementation "io.cucumber:cucumber-java:${libVersions.cucumberJVM}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${libVersions.jacksonXml}"
