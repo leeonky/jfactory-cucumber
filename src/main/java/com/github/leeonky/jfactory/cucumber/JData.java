@@ -25,11 +25,6 @@ import static java.util.stream.IntStream.range;
 
 public class JData {
     private final JFactory jFactory;
-//    private final DAL dal = DAL.getInstance();
-//
-//    public DAL getDal() {
-//        return dal;
-//    }
 
     public JData(JFactory jFactory) {
         this.jFactory = jFactory;
@@ -89,7 +84,7 @@ public class JData {
     }
 
     private <T> T assertData(Object instance, String dalExpression) {
-        return expect(instance).should(dalExpression);
+        return expect(instance).get(dalExpression);
     }
 
     public <T> T query(String queryExpression) {
