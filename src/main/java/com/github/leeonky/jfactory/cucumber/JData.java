@@ -72,19 +72,15 @@ public class JData {
     @那么("所有{string}应为：")
     @那么("所有{string}应为:")
     @Then("All data {string} should be:")
-    public <T> T allShould(String queryExpression, String dalExpression) {
-        return assertData(queryAll(queryExpression), dalExpression);
+    public void allShould(String queryExpression, String dalExpression) {
+        expect(queryAll(queryExpression)).should(dalExpression);
     }
 
     @那么("{string}应为：")
     @那么("{string}应为:")
     @Then("Data {string} should be:")
-    public <T> T should(String queryExpression, String dalExpression) {
-        return assertData(query(queryExpression), dalExpression);
-    }
-
-    private <T> T assertData(Object instance, String dalExpression) {
-        return expect(instance).get(dalExpression);
+    public void should(String queryExpression, String dalExpression) {
+        expect(query(queryExpression)).should(dalExpression);
     }
 
     public <T> T query(String queryExpression) {
@@ -166,7 +162,7 @@ public class JData {
 
     private class BeanProperty {
         private final Object bean;
-        private Property property;
+        private final Property property;
 
         public BeanProperty(String beanProperty) {
             int index = beanProperty.lastIndexOf('.');
