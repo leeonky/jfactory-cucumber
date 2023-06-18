@@ -13,6 +13,7 @@ import org.picocontainer.annotations.Inject;
 
 import javax.persistence.EntityTransaction;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CommonSteps {
@@ -26,6 +27,7 @@ public class CommonSteps {
         EntityFactory.entityManager.createQuery("delete from ProductStock").executeUpdate();
         EntityFactory.entityManager.createQuery("delete from Product").executeUpdate();
         EntityFactory.entityManager.createQuery("delete from Cart").executeUpdate();
+        EntityFactory.entityManager.createQuery("delete from SnakeCaseProduct").executeUpdate();
         transaction.commit();
         EntityFactory.jpaDataRepository.clear();
     }
@@ -42,8 +44,11 @@ public class CommonSteps {
     }
 
     @SneakyThrows
-    private static Map<String, Object> deserialize(ObjectMapper objectMapper, String content) {
-        return objectMapper.readValue(content, new TypeReference<HashMap<String, Object>>() {});
+    private static Object deserialize(ObjectMapper objectMapper, String content) {
+        if (objectMapper.readValue(content, Object.class) instanceof Map)
+            return objectMapper.readValue(content, new TypeReference<HashMap<String, Object>>() {});
+        else
+            return objectMapper.readValue(content, new TypeReference<List<HashMap<String, Object>>>() {});
     }
 
     private static class SnakeCaseKeyDeserializer extends KeyDeserializer {
