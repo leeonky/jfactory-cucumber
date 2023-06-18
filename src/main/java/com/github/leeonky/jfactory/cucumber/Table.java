@@ -1,6 +1,5 @@
 package com.github.leeonky.jfactory.cucumber;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -8,6 +7,7 @@ import com.github.leeonky.util.BeanClass;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,6 +27,23 @@ public class Table extends ArrayList<Map<String, ?>> {
         configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true);
     }};
+
+    private static Function<String, Object> jsonDeserializer;
+
+    static {
+        setJsonDeserializer(content -> {
+            try {
+                return JSON_OBJECT_MAPPER.readValue(content, Object.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public static void setJsonDeserializer(Function<String, Object> jsonDeserializer) {
+        Table.jsonDeserializer = jsonDeserializer;
+    }
+
     private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory()) {{
         configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
     }};
@@ -58,8 +75,8 @@ public class Table extends ArrayList<Map<String, ?>> {
 
     private static Object parse(String content) throws IOException {
         try {
-            return JSON_OBJECT_MAPPER.readValue(content, Object.class);
-        } catch (JsonParseException e) {
+            return jsonDeserializer.apply(content);
+        } catch (Exception e) {
             return YAML_OBJECT_MAPPER.readValue(content, Object.class);
         }
     }

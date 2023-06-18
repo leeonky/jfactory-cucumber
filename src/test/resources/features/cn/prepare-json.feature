@@ -74,3 +74,16 @@
       and [0].name='book'
       and [1].name='bicycle'
     """
+
+  场景: Json数据序列化支持自定义
+    假如已自定义SnakeCase序列化
+    并且存在"SnakeCase商品"：
+    """
+    {
+      "product_name": "book"
+    }
+    """
+    那么所有"SnakeCase商品"应为：
+    """
+      .productName[]= [book]
+    """

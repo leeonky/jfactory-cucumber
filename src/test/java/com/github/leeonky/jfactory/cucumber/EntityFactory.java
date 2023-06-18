@@ -1,10 +1,7 @@
 package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.jfactory.JFactory;
-import com.github.leeonky.jfactory.cucumber.factory.Carts;
-import com.github.leeonky.jfactory.cucumber.factory.Orders;
-import com.github.leeonky.jfactory.cucumber.factory.ProductStocks;
-import com.github.leeonky.jfactory.cucumber.factory.Products;
+import com.github.leeonky.jfactory.cucumber.factory.*;
 import com.github.leeonky.jfactory.repo.JPADataRepository;
 
 import javax.persistence.EntityManager;
@@ -22,6 +19,7 @@ public class EntityFactory extends JFactory {
         register(Carts.购物车.class);
         register(ProductStocks.库存.class);
         register(Orders.订单.class);
+        register(SnakeCaseProducts.SnakeCase商品.class);
 
         register(Products.ProductFactory.class);
         register(Carts.CartProduct.class);
