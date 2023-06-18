@@ -19,6 +19,7 @@ public class Product {
     private long id;
     private String name;
     private String color;
+    private String camelCaseName;
 
     @OneToMany(mappedBy = "product")
     private List<ProductStock> stocks = new ArrayList<>();

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.zh_cn.假如;
 import io.cucumber.messages.internal.com.google.common.base.CaseFormat;
 import lombok.SneakyThrows;
 import org.picocontainer.annotations.Inject;
@@ -35,12 +35,17 @@ public class CommonSteps {
     @Inject
     private JData jData;
 
-    @假如("已自定义SnakeCase序列化")
-    public void 已自定义snakecase序列化() {
+    @Before("@custom-json-deserializer")
+    public void customJsonDeserializer() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new SimpleModule()
                 .addKeyDeserializer(String.class, new SnakeCaseKeyDeserializer()));
         Table.setJsonDeserializer(content -> deserialize(objectMapper, content));
+    }
+
+    @After("@custom-json-deserializer")
+    public void resetDefaultJsonDeserializer() {
+        Table.resetJsonDeserializer();
     }
 
     @SneakyThrows

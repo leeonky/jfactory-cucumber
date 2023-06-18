@@ -31,13 +31,7 @@ public class Table extends ArrayList<Map<String, ?>> {
     private static Function<String, Object> jsonDeserializer;
 
     static {
-        setJsonDeserializer(content -> {
-            try {
-                return JSON_OBJECT_MAPPER.readValue(content, Object.class);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        resetJsonDeserializer();
     }
 
     public static void setJsonDeserializer(Function<String, Object> jsonDeserializer) {
@@ -63,7 +57,7 @@ public class Table extends ArrayList<Map<String, ?>> {
 
     public static Table create(List<String> headers, List<? extends List<?>> rows) {
         return create(rows.stream().map(row ->
-                range(0, headers.size()).boxed().collect(toMap(headers::get, i -> row.get(i))))
+                        range(0, headers.size()).boxed().collect(toMap(headers::get, i -> row.get(i))))
                 .collect(Collectors.toList()));
     }
 
@@ -84,6 +78,16 @@ public class Table extends ArrayList<Map<String, ?>> {
     @SuppressWarnings("unchecked")
     public Map<String, Object>[] flatSub() {
         return stream().map(this::flat).toArray(Map[]::new);
+    }
+
+    public static void resetJsonDeserializer() {
+        setJsonDeserializer(content -> {
+            try {
+                return JSON_OBJECT_MAPPER.readValue(content, Object.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private <T> Map<String, T> merge(Map<String, T> m1, Map<String, T> m2) {
