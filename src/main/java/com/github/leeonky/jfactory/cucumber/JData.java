@@ -114,7 +114,19 @@ public class JData {
     }
 
     public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, List<? extends Map<String, ?>> data) {
-        return new BeanProperty(beanProperty).attach(prepare(traitsSpec, data));
+        List<T> attachments = prepare(traitsSpec, data);
+        int index = beanProperty.lastIndexOf('.');
+        Object bean = query(beanProperty.substring(0, index));
+        Property property = BeanClass.create(bean.getClass()).getProperty(beanProperty.substring(index + 1));
+        if (Collection.class.isAssignableFrom(property.getReaderType().getType()))
+            ((Collection<T>) property.getValue(bean)).addAll(attachments);
+        else {
+            if (attachments.size() != 1)
+                throw new IllegalStateException("More than one candidates");
+            property.setValue(bean, attachments.get(0));
+        }
+        jFactory.getDataRepository().save(bean);
+        return attachments;
     }
 
     @假如("存在{string}的{int}个{string}")
@@ -158,30 +170,6 @@ public class JData {
 
     private Builder<Object> toBuild(String traitsSpec) {
         return jFactory.spec(traitsSpec.split(", |,| "));
-    }
-
-    private class BeanProperty {
-        private final Object bean;
-        private final Property property;
-
-        public BeanProperty(String beanProperty) {
-            int index = beanProperty.lastIndexOf('.');
-            bean = query(beanProperty.substring(0, index));
-            property = BeanClass.create(bean.getClass()).getProperty(beanProperty.substring(index + 1));
-        }
-
-        @SuppressWarnings("unchecked")
-        private <T> List<T> attach(List<T> attachments) {
-            if (Collection.class.isAssignableFrom(property.getReaderType().getType()))
-                ((Collection<T>) property.getValue(bean)).addAll(attachments);
-            else {
-                if (attachments.size() != 1)
-                    throw new IllegalStateException("More than one candidates");
-                property.setValue(bean, attachments.get(0));
-            }
-            jFactory.getDataRepository().save(bean);
-            return attachments;
-        }
     }
 
     private class QueryExpression {

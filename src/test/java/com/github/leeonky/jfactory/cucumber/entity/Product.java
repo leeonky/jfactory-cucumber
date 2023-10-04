@@ -23,5 +23,8 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<ProductStock> stocks = new ArrayList<>();
+
+    @ManyToOne
+    private Category category;
 }
 
