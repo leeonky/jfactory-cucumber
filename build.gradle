@@ -65,7 +65,7 @@ repositories {
 dependencies {
 
     compile dep(':jfactory', '0.3.20')
-    compile dep(':DAL-java', '0.3.19')
+    compile dep(':DAL-java', '0.3.22')
 
     implementation "io.cucumber:cucumber-java:${libVersions.cucumberJVM}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${libVersions.jacksonXml}"
