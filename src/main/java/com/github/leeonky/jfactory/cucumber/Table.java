@@ -109,8 +109,8 @@ public class Table extends ArrayList<Map<String, ?>> {
 
     private Map<String, ?> combineKey(Map<String, ?> sub, String key, String dot) {
         Postfix postfix = new Postfix((String) sub.remove("_"));
-        return sub.entrySet().stream().collect(toMap(e -> key + postfix.apply() + dot + e.getKey(),
-                Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
+        return sub.entrySet().stream().collect(LinkedHashMap::new,
+                (map, e) -> map.put(key + postfix.apply() + dot + e.getKey(), e.getValue()), LinkedHashMap::putAll);
     }
 
     private Map<String, ?> flat(Map<String, ?> value) {

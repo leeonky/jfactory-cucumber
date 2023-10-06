@@ -14,3 +14,17 @@ Feature: bug
      product.category.name= PC
     }
     """
+
+  Scenario: null value in json format
+    Given Exists data "Product":
+    """
+    {
+      "category": {
+        "name": null
+      }
+    }
+    """
+    Then Data "Product" should be:
+    """
+    category.name= null
+    """
