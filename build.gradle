@@ -65,7 +65,7 @@ repositories {
 dependencies {
 
     compile dep(':jfactory', '0.3.20')
-    compile dep(':DAL-java', '0.3.22')
+    compile dep(':DAL-java', '0.4.1')
 
     implementation "io.cucumber:cucumber-java:${libVersions.cucumberJVM}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${libVersions.jacksonXml}"
@@ -82,6 +82,7 @@ dependencies {
     testImplementation 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.3'
+    testImplementation("com.google.guava:guava:20.0")
 
     pitest 'io.github.wmaarts:pitest-mutation-testing-elements-plugin:0.3.1'
 }

@@ -56,11 +56,12 @@ public class JData {
     public Table transform(DataTable dataTable) {
         if (needTranspose(dataTable))
             dataTable = DataTable.create(removeTransposeSymbol(dataTable));
-        return create(dataTable.asMaps());
+        List<List<String>> cells = dataTable.cells();
+        return create(cells.get(0), cells.subList(1, cells.size()));
     }
 
     private List<List<String>> removeTransposeSymbol(DataTable dataTable) {
-        List<List<String>> data = dataTable.transpose().asLists().stream().map(ArrayList::new).collect(toList());
+        List<List<String>> data = dataTable.transpose().cells().stream().map(ArrayList::new).collect(toList());
         data.get(0).set(0, data.get(0).get(0).substring(1));
         return data;
     }

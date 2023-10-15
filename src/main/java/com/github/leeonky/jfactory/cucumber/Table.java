@@ -17,7 +17,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
 import static java.util.stream.IntStream.range;
 
 public class Table extends ArrayList<Map<String, ?>> {
@@ -56,9 +55,9 @@ public class Table extends ArrayList<Map<String, ?>> {
     }
 
     public static Table create(List<String> headers, List<? extends List<?>> rows) {
-        return create(rows.stream().map(row ->
-                        range(0, headers.size()).boxed().collect(toMap(headers::get, i -> row.get(i))))
-                .collect(Collectors.toList()));
+        return create(rows.stream().map(row -> range(0, headers.size()).boxed().
+                <LinkedHashMap<String, Object>>collect(LinkedHashMap::new,
+                (map, i) -> map.put(headers.get(i), row.get(i)), LinkedHashMap::putAll)).collect(Collectors.toList()));
     }
 
     @SuppressWarnings("unchecked")

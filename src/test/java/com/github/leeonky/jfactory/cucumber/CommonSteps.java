@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.base.CaseFormat;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.messages.internal.com.google.common.base.CaseFormat;
 import lombok.SneakyThrows;
 import org.picocontainer.annotations.Inject;
 
@@ -51,9 +51,11 @@ public class CommonSteps {
     @SneakyThrows
     private static Object deserialize(ObjectMapper objectMapper, String content) {
         if (objectMapper.readValue(content, Object.class) instanceof Map)
-            return objectMapper.readValue(content, new TypeReference<HashMap<String, Object>>() {});
+            return objectMapper.readValue(content, new TypeReference<HashMap<String, Object>>() {
+            });
         else
-            return objectMapper.readValue(content, new TypeReference<List<HashMap<String, Object>>>() {});
+            return objectMapper.readValue(content, new TypeReference<List<HashMap<String, Object>>>() {
+            });
     }
 
     private static class SnakeCaseKeyDeserializer extends KeyDeserializer {
