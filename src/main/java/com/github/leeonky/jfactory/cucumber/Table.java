@@ -3,6 +3,7 @@ package com.github.leeonky.jfactory.cucumber;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.github.leeonky.jfactory.DataParser;
 import com.github.leeonky.util.BeanClass;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.github.leeonky.jfactory.DataParser.tryFlat;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -64,6 +66,12 @@ public class Table extends ArrayList<Map<String, ?>> {
     public static Table create(String content) throws IOException {
         Object value = parse(content);
         return create(BeanClass.cast(value, List.class).orElseGet(() -> singletonList(value)));
+    }
+
+    public static TableForDAL createByDAL(String content) {
+        TableForDAL table = new TableForDAL();
+        table.add(tryFlat(DataParser.parse(content)));
+        return table;
     }
 
     private static Object parse(String content) throws IOException {
@@ -140,6 +148,15 @@ public class Table extends ArrayList<Map<String, ?>> {
 
         public String apply() {
             return !applied && postfix != null && (applied = true) ? format(postfix) : "";
+        }
+    }
+
+    public static class TableForDAL extends Table {
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Map<String, Object>[] flatSub() {
+            return toArray(new Map[0]);
         }
     }
 }

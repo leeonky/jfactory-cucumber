@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import static com.github.leeonky.dal.Assertions.expect;
 import static com.github.leeonky.jfactory.cucumber.Table.create;
+import static com.github.leeonky.jfactory.cucumber.Table.createByDAL;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
@@ -33,6 +34,7 @@ public class JData {
     @假如("存在{string}：")
     @假如("存在{string}:")
     @Given("Exists data {string}:")
+    @Given("exists data {string}:")
     public <T> List<T> prepare(String traitsSpec, Table table) {
         return prepare(traitsSpec, table.flatSub());
     }
@@ -50,6 +52,11 @@ public class JData {
     @DocStringType
     public Table transform(String content) throws IOException {
         return create(content);
+    }
+
+    @DocStringType(contentType = "DAL")
+    public Table.TableForDAL transformDAL(String content) {
+        return createByDAL(content);
     }
 
     @DataTableType
@@ -73,6 +80,7 @@ public class JData {
     @那么("所有{string}应为：")
     @那么("所有{string}应为:")
     @Then("All data {string} should be:")
+    @Then("all data {string} should be:")
     public void allShould(String queryExpression, String dalExpression) {
         expect(queryAll(queryExpression)).should(dalExpression);
     }
@@ -80,6 +88,7 @@ public class JData {
     @那么("{string}应为：")
     @那么("{string}应为:")
     @Then("Data {string} should be:")
+    @Then("data {string} should be:")
     public void should(String queryExpression, String dalExpression) {
         expect(query(queryExpression)).should(dalExpression);
     }
@@ -94,6 +103,7 @@ public class JData {
 
     @假如("存在{int}个{string}")
     @Given("Exists {int} data {string}")
+    @Given("exists {int} data {string}")
     public <T> List<T> prepare(int count, String traitsSpec) {
         return prepare(traitsSpec, defaultProperties(count));
     }
@@ -105,6 +115,7 @@ public class JData {
     @假如("存在{string}的{string}：")
     @假如("存在{string}的{string}:")
     @Given("Exists {string} as data {string}:")
+    @Given("exists {string} as data {string}:")
     public <T> List<T> prepareAttachments(String beanProperty, String traitsSpec, Table table) {
         return prepareAttachments(beanProperty, traitsSpec, table.flatSub());
     }
@@ -132,6 +143,7 @@ public class JData {
 
     @假如("存在{string}的{int}个{string}")
     @Given("Exists {string} as {int} data {string}")
+    @Given("exists {string} as {int} data {string}")
     public <T> List<T> prepareAttachments(String beanProperty, int count, String traitsSpec) {
         return prepareAttachments(beanProperty, traitsSpec, defaultProperties(count));
     }
@@ -139,6 +151,7 @@ public class JData {
     @假如("存在如下{string}，并且其{string}为{string}：")
     @假如("存在如下{string}, 并且其{string}为{string}:")
     @Given("Exists following data {string}, and its {string} is {string}:")
+    @Given("exists following data {string}, and its {string} is {string}:")
     public <T> List<T> prepareAttachments(String traitsSpec, String reverseAssociationProperty, String queryExpression,
                                           Table table) {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, table.flatSub());
@@ -158,6 +171,7 @@ public class JData {
     @假如("存在{int}个{string}，并且其{string}为{string}")
     @假如("存在{int}个{string}, 并且其{string}为{string}")
     @Given("Exists {int} data {string}, and its {string} is {string}")
+    @Given("exists {int} data {string}, and its {string} is {string}")
     public <T> List<T> prepareAttachments(int count, String traitsSpec, String reverseAssociationProperty,
                                           String queryExpression) {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, defaultProperties(count));
