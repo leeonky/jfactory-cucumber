@@ -63,9 +63,13 @@ public class Table extends ArrayList<Map<String, ?>> {
     }
 
     @SuppressWarnings("unchecked")
-    public static Table create(String content) throws IOException {
-        Object value = parse(content);
-        return create(BeanClass.cast(value, List.class).orElseGet(() -> singletonList(value)));
+    public static Table create(String content) {
+        try {
+            Object value = jsonDeserializer.apply(content);
+            return create(BeanClass.cast(value, List.class).orElseGet(() -> singletonList(value)));
+        } catch (Exception e) {
+            return createByDAL(content);
+        }
     }
 
     public static Flatten createByDAL(String content) {
@@ -76,14 +80,6 @@ public class Table extends ArrayList<Map<String, ?>> {
         else
             table.add(tryFlat(data));
         return table;
-    }
-
-    private static Object parse(String content) throws IOException {
-        try {
-            return jsonDeserializer.apply(content);
-        } catch (Exception e) {
-            return YAML_OBJECT_MAPPER.readValue(content, Object.class);
-        }
     }
 
     @SuppressWarnings("unchecked")

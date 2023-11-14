@@ -3,7 +3,7 @@
 
   场景: 准备商品-DAL格式
     假如存在"商品"：
-    """ DAL
+    """
     name: 'book'.toUpperCase
     color: red
     """
@@ -15,7 +15,7 @@
 
   场景: 准备多个商品-DAL格式
     假如存在"商品"：
-    """ DAL
+    """
     | name | color |
     | book | red   |
     | iPad | white |
