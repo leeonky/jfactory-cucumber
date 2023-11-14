@@ -55,7 +55,7 @@ public class JData {
     }
 
     @DocStringType(contentType = "DAL")
-    public Table.TableForDAL transformDAL(String content) {
+    public Table.Flatten transformDAL(String content) {
         return createByDAL(content);
     }
 
