@@ -169,26 +169,6 @@ class JDataTest {
     class TransformShould {
 
         @Nested
-        class SupportYaml {
-
-            @Test
-            void array_to_table() throws IOException {
-                Table table = jData.transform("- name: book\n" +
-                        "- name: bicycle");
-
-                assertThat(table).extracting("name").containsExactly("book", "bicycle");
-            }
-
-            @Test
-            void object_to_table() throws IOException {
-                Table table = jData.transform("name: book\n" +
-                        "color: red");
-
-                assertThat(table).extracting("name", "color").containsExactly(tuple("book", "red"));
-            }
-        }
-
-        @Nested
         class SupportJson {
 
             @Test

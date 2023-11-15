@@ -12,7 +12,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.zh_cn.假如;
 import io.cucumber.java.zh_cn.那么;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,7 +49,7 @@ public class JData {
     }
 
     @DocStringType
-    public Table transform(String content) throws IOException {
+    public Table transform(String content) {
         return create(content);
     }
 

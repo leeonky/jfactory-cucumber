@@ -64,7 +64,7 @@ repositories {
 
 dependencies {
     compile dep(':jfactory', '0.3.23')
-    compile dep(':DAL-java', '0.4.3')
+    compile dep(':DAL-java', '0.4.4')
     implementation dep(':jfactory-property-value', '0.0.12')
 
     implementation "io.cucumber:cucumber-java:${libVersions.cucumberJVM}"
