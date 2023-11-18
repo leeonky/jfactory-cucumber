@@ -26,3 +26,29 @@
        | book | red   |
        | iPad | white |
     """
+
+  场景: 准备商品-all in one: single object
+    假如存在：
+    """
+    商品: {
+      name: 'book'.toUpperCase
+      color: red
+    }
+    """
+    那么所有"商品"应为：
+    """
+    :  | name | color |
+       | BOOK | red   |
+    """
+
+  场景: 准备商品-all in one: list
+    假如存在：
+    """
+    商品: | name | color |
+          | BOOK | red   |
+    """
+    那么所有"商品"应为：
+    """
+    :  | name | color |
+       | BOOK | red   |
+    """
