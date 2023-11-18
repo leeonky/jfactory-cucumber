@@ -52,3 +52,15 @@
     :  | name | color |
        | BOOK | red   |
     """
+
+  场景: 准备商品-all in one with out properties
+    假如存在：
+    """
+    商品
+    商品
+    商品
+    """
+    那么所有"商品"应为：
+    """
+    ::size= 3
+    """

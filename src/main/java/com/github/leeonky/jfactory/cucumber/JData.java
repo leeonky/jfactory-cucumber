@@ -179,7 +179,7 @@ public class JData {
     @Given("Exists data:")
     @And("exists data:")
     public void prepare(String data) {
-        DataParser.specs(data).forEach(spec -> prepare(spec.traitSpec(), flattenTable(spec.getData().value())));
+        DataParser.specs(data).forEach(spec -> prepare(spec.traitSpec(), flattenTable(spec.properties())));
     }
 
     private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String queryExpression,
