@@ -1,7 +1,9 @@
 package com.github.leeonky.jfactory.cucumber;
 
 import com.github.leeonky.jfactory.Builder;
+import com.github.leeonky.jfactory.DataParser;
 import com.github.leeonky.jfactory.JFactory;
+import com.github.leeonky.jfactory.helper.Specs;
 import com.github.leeonky.util.BeanClass;
 import com.github.leeonky.util.Property;
 import io.cucumber.datatable.DataTable;
@@ -18,7 +20,6 @@ import java.util.regex.Pattern;
 
 import static com.github.leeonky.dal.Assertions.expect;
 import static com.github.leeonky.jfactory.cucumber.Table.create;
-import static com.github.leeonky.jfactory.cucumber.Table.createByDAL;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
@@ -51,11 +52,6 @@ public class JData {
     @DocStringType
     public Table transform(String content) {
         return create(content);
-    }
-
-    @DocStringType(contentType = "DAL")
-    public Table.Flatten transformDAL(String content) {
-        return createByDAL(content);
     }
 
     @DataTableType
@@ -174,6 +170,14 @@ public class JData {
     public <T> List<T> prepareAttachments(int count, String traitsSpec, String reverseAssociationProperty,
                                           String queryExpression) {
         return prepareAttachments(traitsSpec, reverseAssociationProperty, queryExpression, defaultProperties(count));
+    }
+
+    @假如("存在:")
+    @假如("存在：")
+    @假如("Exists data:")
+    @假如("exists data:")
+    public void prepare(String data) {
+        Specs specs = DataParser.specs(data);
     }
 
     private List<Map<String, ?>> addAssociationProperty(String reverseAssociationProperty, String queryExpression,

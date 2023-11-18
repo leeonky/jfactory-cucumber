@@ -68,18 +68,14 @@ public class Table extends ArrayList<Map<String, ?>> {
             Object value = jsonDeserializer.apply(content);
             return create(BeanClass.cast(value, List.class).orElseGet(() -> singletonList(value)));
         } catch (Exception e) {
-            return createByDAL(content);
+            Flatten table = new Flatten();
+            Object data = DataParser.parse(content);
+            if (data instanceof List)
+                ((List<?>) data).forEach(list -> table.add(tryFlat(list)));
+            else
+                table.add(tryFlat(data));
+            return table;
         }
-    }
-
-    public static Flatten createByDAL(String content) {
-        Flatten table = new Flatten();
-        Object data = DataParser.parse(content);
-        if (data instanceof List)
-            ((List<?>) data).forEach(list -> table.add(tryFlat(list)));
-        else
-            table.add(tryFlat(data));
-        return table;
     }
 
     @SuppressWarnings("unchecked")
