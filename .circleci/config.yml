@@ -12,7 +12,7 @@ jobs:
           name: build
           command: |
             export VERSION_SCOPE=''
-            ./gradlew check build coveralls --stacktrace
+            ./gradlew check build
             export PUB_VERSION=$(./gradlew currentVersion -q)
             if ( bash -c "git tag | grep -q \"^${PUB_VERSION}$\"" ); then
               echo "====== Still version ${PUB_VERSION}, CI done ======"
