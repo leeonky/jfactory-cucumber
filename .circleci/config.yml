@@ -12,7 +12,7 @@ jobs:
           name: build
           command: |
             export VERSION_SCOPE=''
-            ./gradlew check build coveralls
+            ./gradlew check build coveralls --stacktrace
             export PUB_VERSION=$(./gradlew currentVersion -q)
             if ( bash -c "git tag | grep -q \"^${PUB_VERSION}$\"" ); then
               echo "====== Still version ${PUB_VERSION}, CI done ======"
@@ -25,7 +25,7 @@ jobs:
             git config --global user.name "leeonky"
             git tag ${PUB_VERSION} -a -m 'CI Release'
             git push --tags
-           
+
       - store_artifacts:
           path: /root/project/build/reports/
           destination: build-reports
