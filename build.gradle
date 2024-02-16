@@ -23,7 +23,7 @@ def dep(p, version) {
 
 plugins {
     id 'jacoco'
-    id 'com.github.kt3k.coveralls' version '2.8.2'
+    id 'com.github.kt3k.coveralls' version '2.12.2'
     id 'de.marcphilipp.nexus-publish' version '0.2.0'
 }
 
